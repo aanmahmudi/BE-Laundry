@@ -1,4 +1,4 @@
-package Entity;
+package com.laundry.BE_Laundry.Entity;
 
 import java.util.Date;
 
@@ -22,13 +22,14 @@ public class Transaction {
 	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
-	private Product product;
 	
 	@ManyToOne
 	@JoinColumn(name = "product_id")
+	private Product product;
+	
 	private int quantity;
 	private double totalPrice;
-	private Date transactionDate;
+	private Date transactionDate = new Date();
 	
 
 }
