@@ -18,7 +18,7 @@ public class CustomerService {
 		return customerRepository.save(customer);
 	}
 	
-	public List<Customer> getAllCustomer(){
+	public List<Customer> getAllCustomers(){
 		return customerRepository.findAll();		
 	}
 	
