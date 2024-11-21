@@ -1,5 +1,7 @@
 package com.laundry.BE_Laundry.Entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +22,7 @@ public class Product {
 	private Long id;
 	
 	private String name;
-	private double price;
+	private BigDecimal price;
 	private String description;
 
 }

@@ -2,7 +2,7 @@ package com.laundry.BE_Laundry.Controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,29 +10,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.laundry.BE_Laundry.Entity.Transaction;
+import com.laundry.BE_Laundry.DTO.TransactionRequestDTO;
+import com.laundry.BE_Laundry.DTO.TransactionResponseDTO;
 import com.laundry.BE_Laundry.Service.TransactionService;
 
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
 	
-	@Autowired
-	private TransactionService transactionService;
+	private final TransactionService transactionService;
+	
+	public TransactionController(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
 	
 	@PostMapping
-	public Transaction createTransaction(@RequestBody Transaction transaction) {
-		return transactionService.createTransaction(transaction);		
+	public ResponseEntity<TransactionResponseDTO> createTransaction(@RequestBody TransactionRequestDTO requestDTO) {
+		TransactionResponseDTO response = transactionService.createTransaction(requestDTO);
+		return ResponseEntity.ok(response);		
 	}
 	
 	@GetMapping
-	public List<Transaction> getAllTransactions(){
-		return transactionService.getAllTransactions();		
+	public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions(){
+		List<TransactionResponseDTO> transactions = transactionService.getAllTransactions();
+		return ResponseEntity.ok(transactions);
 	}
 	
 	@GetMapping("/{id}")
-	public Transaction getTransactionById(@PathVariable Long id) {
-		return transactionService.getTransactionById(id);
+	public ResponseEntity <TransactionResponseDTO> getTransactionById(@PathVariable Long id) {
+		TransactionResponseDTO response = transactionService.getTransactionById(id);
+		return ResponseEntity.ok(response);
 		
 	}
 
