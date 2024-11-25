@@ -7,11 +7,14 @@ import lombok.Data;
 
 @Data
 public class TransactionResponseDTO {
+
 	private Long id;
 	private String customerName;
 	private String productName;
 	private int quantity;
 	private BigDecimal totalPrice;
 	private LocalDateTime transactionDate;
+	private String paymentStatus;
+	private BigDecimal paymentAmount;
 
 }

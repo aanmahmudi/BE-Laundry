@@ -34,11 +34,11 @@ public class Transaction {
 	private Product product;
 
 	private int quantity;
-
-	@Column(name = "total_price", nullable = false)
 	private BigDecimal totalPrice;
 
-	@Column(name = "trasaction_date", nullable = false)
+	@Column(nullable = false)
 	private LocalDateTime transactionDate = LocalDateTime.now();
-
+	
+	private String paymentStatus = "PENDING";
+	private BigDecimal paymentAmount = BigDecimal.ZERO;
 }
