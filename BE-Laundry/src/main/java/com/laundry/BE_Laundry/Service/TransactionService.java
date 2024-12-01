@@ -3,10 +3,8 @@ package com.laundry.BE_Laundry.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.laundry.BE_Laundry.DTO.PaymentRequestDTO;
@@ -21,74 +19,114 @@ import com.laundry.BE_Laundry.Repository.TransactionRepository;
 
 @Service
 public class TransactionService {
-	@Autowired
-	private TransactionRepository transactionRepository;
+	
+	private final TransactionRepository transactionRepository;
 
-	@Autowired
-	private CustomerRepository customerRepository;
+	private final CustomerRepository customerRepository;
 
-	@Autowired
-	private ProductRepository productRepository;
-
-	public TransactionResponseDTO createTransaction(TransactionRequestDTO transactionRequestDTO) {
-		Optional<Customer> optionalCustomer = customerRepository.findById(transactionRequestDTO.getCustomerId());
-		if (optionalCustomer.isEmpty()) {
-			throw new IllegalArgumentException("Customer not found.");
+	private final ProductRepository productRepository;
+	
+	public TransactionService(TransactionRepository transactionRepository,
+								CustomerRepository customerRepository,
+								ProductRepository productRepository) {
+		this.transactionRepository = transactionRepository;
+		this.customerRepository = customerRepository;
+		this.productRepository = productRepository;
+	}
+	
+	public TransactionResponseDTO makePayment(PaymentRequestDTO paymentRequest) {
+		Transaction transaction = transactionRepository.findById(paymentRequest.getTrasactionId())
+				.orElseThrow(()-> new RuntimeException("Transaction not found"));
+		
+		if ("PAID".equalsIgnoreCase(transaction.getPaymentStatus())) {
+			throw new RuntimeException("Transaction is already paid.");
 		}
-		Customer customer = optionalCustomer.get();
-
-		Optional<Product> optionalProduct = productRepository.findById(transactionRequestDTO.getProductId());
-		if (optionalProduct.isEmpty()) {
-			throw new IllegalArgumentException("Product not found.");
+		
+		if (paymentRequest.getPaymentAmount().compareTo(transaction.getTotalPrice())< 0) {
+			throw new RuntimeException("Insuffiicient payment amount.");
 		}
-		Product product = optionalProduct.get();
-
-		BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(transactionRequestDTO.getQuantity()));
-
+		
+		transaction.setPaymentStatus("PAID");
+		transaction.setPaymentAmount(paymentRequest.getPaymentAmount());
+		transactionRepository.save(transaction);
+		
+		return mapToResponseDTO(transaction);
+		
+	}
+	
+	//get data berdasarkan yang sudah dipayment
+	public List<TransactionResponseDTO> getPaidTransactions(){
+		return transactionRepository.findAll().stream()
+				.filter(transaction -> "PAID".equalsIgnoreCase(transaction.getPaymentStatus()))
+				.map(this::mapToResponseDTO)
+				.collect(Collectors.toList());	
+	}
+	
+	//get data all in
+	public List<TransactionResponseDTO> getAllTransactions(){
+		return transactionRepository.findAll().stream()
+				.map(this::mapToResponseDTO)
+				.collect(Collectors.toList());	
+	}
+	
+	// get data berdasarkan id
+	public TransactionResponseDTO getTransactionById(Long id) {
+		Transaction transaction = transactionRepository.findById(id)
+				.orElseThrow(()-> new RuntimeException("Transaction not found"));
+		return mapToResponseDTO(transaction);
+		
+	}
+	
+	//create transaksi baru
+	public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO) {
+		Customer customer = customerRepository.findById(requestDTO.getCustomerId())
+				.orElseThrow(()-> new RuntimeException("Customer not found"));
+		Product product = productRepository.findById(requestDTO.getProductId())
+				.orElseThrow(()-> new RuntimeException("Product not found"));
+		
 		Transaction transaction = new Transaction();
 		transaction.setCustomer(customer);
 		transaction.setProduct(product);
-		transaction.setQuantity(transactionRequestDTO.getQuantity());
-		transaction.setTotalPrice(totalPrice);
+		transaction.setQuantity(requestDTO.getQuantity());
+		transaction.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(requestDTO.getQuantity())));
 		transaction.setTransactionDate(LocalDateTime.now());
-		transaction.setPaymentStatus("Pending");
-
+		transaction.setPaymentStatus("UNPAID");
+		
 		transactionRepository.save(transaction);
-
-		TransactionResponseDTO responseDTO = new TransactionResponseDTO();
-		responseDTO.setId(transaction.getId());
-		responseDTO.setCustomerName(customer.getName());
-		responseDTO.setProductName(product.getName());
-		responseDTO.setQuantity(transaction.getQuantity());
-		responseDTO.setTotalPrice(transaction.getTotalPrice());
-		responseDTO.setTransactionDate(transaction.getTransactionDate());
-		responseDTO.setPaymentStatus(transaction.getPaymentStatus());
-		responseDTO.setPaymentAmount(transaction.getPaymentAmount());
-		return responseDTO;
-
+		return mapToResponseDTO(transaction);	
 	}
-
-	public String makePayment(PaymentRequestDTO paymentRequestDTO) {
-		Optional<Transaction> optionalTransaction = transactionRepository.findById(paymentRequestDTO.getTrasactionId());
-		if (optionalTransaction.isEmpty()) {
-			return "Transaction not found.";
+	
+	// Melakukan payment pada transaksi
+	public TransactionResponseDTO makePayment(Long transactionId, BigDecimal paymentAmount) {
+		Transaction transaction = transactionRepository.findById(transactionId)
+				.orElseThrow(()-> new RuntimeException("Transction not found"));
+		
+		if (transaction.getPaymentStatus().equals("PAID")) {
+			throw new RuntimeException("Transaction already paid");
 		}
-
-		Transaction transaction = optionalTransaction.get();
-
-		if ("PAID".equalsIgnoreCase(transaction.getPaymentStatus())) {
-			return "Transaction is already paid.";
-		}
-
-		if (paymentRequestDTO.getPaymentAmount().compareTo(transaction.getTotalPrice()) < 0) {
-			return "Insufficient payment amount.";
-		}
-
+		
+		// Memastikan Pembayaran cukup
+		if (paymentAmount.compareTo(transaction.getTotalPrice())>0) {
+			throw new RuntimeException("Insufficient payment amount");
+		} 
+		
+		transaction.setPaymentAmount(paymentAmount);
 		transaction.setPaymentStatus("PAID");
-		transaction.setPaymentAmount(paymentRequestDTO.getPaymentAmount());
 		transactionRepository.save(transaction);
-		return "Payment successful.";
-
+		return mapToResponseDTO(transaction);
+	}	
+	//Mapping transaction ke DTO
+	private TransactionResponseDTO mapToResponseDTO(Transaction transaction) {
+		return TransactionResponseDTO.builder()
+				.id(transaction.getId())
+				.customerName(transaction.getCustomer().getName())
+				.productName(transaction.getProduct().getName())
+				.quantity(transaction.getQuantity())
+				.totalPrice(transaction.getTotalPrice())
+				.transactionDate(transaction.getTransactionDate())
+				.paymentStatus(transaction.getPaymentStatus())
+				.paymentAmount(transaction.getPaymentAmount())
+				.build();
+				
 	}
-
 }

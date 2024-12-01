@@ -3,7 +3,6 @@ package com.laundry.BE_Laundry.Entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,11 +33,12 @@ public class Transaction {
 	private Product product;
 
 	private int quantity;
+
 	private BigDecimal totalPrice;
 
-	@Column(nullable = false)
 	private LocalDateTime transactionDate = LocalDateTime.now();
+
+	private String paymentStatus;
 	
-	private String paymentStatus = "PENDING";
-	private BigDecimal paymentAmount = BigDecimal.ZERO;
+	private BigDecimal paymentAmount;
 }
