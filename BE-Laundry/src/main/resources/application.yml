@@ -1,3 +1,4 @@
+debug: true
 logging:
   level:
     '[com.laundry.BE_Laundry]': TRACE
@@ -31,7 +32,7 @@ spring:
     activate:
       on-profile: test
 server:
-  port: 8090
+  port: 5052
 
 
 ---
@@ -40,7 +41,7 @@ spring:
     activate:
       on-profile: development
 server:
-  port: 8084
+  port: 5053
 
 ---
 spring:
@@ -48,4 +49,4 @@ spring:
     activate:
       on-profile: production
 server:
-  port : 80
+  port : 102
