@@ -1,6 +1,12 @@
 package com.laundry.BE_Laundry.Entity;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,8 +26,36 @@ public class Customer {
 
 	private Long id;
 	
+	@Column(nullable = false)
 	private String name;
+	
+	@Column(nullable = true)
 	private String address;
+	
+	@Column(nullable = true)
 	private String phoneNumber;
+	
+	@Column(unique = true, nullable = false)
+	private String email;
+	
+	@Column(nullable = false)
+	private String password;
+	
+	private String verificationToken;
+	private boolean isVerified = false;
+	private LocalDateTime tokenExpiry;
+	
+	@Enumerated(EnumType.STRING)
+	public RoleType role;
+	
+	public enum RoleType {
+		USER,
+		ADMIN
+	}
+	
+	public void generateVerificationToken() {
+		this.verificationToken = UUID.randomUUID().toString();
+		this.tokenExpiry = LocalDateTime.now().plusHours(24);
+	}
 
 }
