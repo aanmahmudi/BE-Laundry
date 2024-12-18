@@ -44,7 +44,10 @@ public class CustomerService {
 		customer.setPhoneNumber(registerDTO.getPhoneNumber());
 		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
 		customer.setVerificationToken(UUID.randomUUID().toString());
-		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+		
+		//Set expiry 2menit
+		//customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+		customer.setTokenExpiry(LocalDateTime.now().minusMinutes(2));
 		customer.setVerified(false);
 		
 		return customer;
@@ -56,7 +59,7 @@ public class CustomerService {
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
 		if (!passwordEncoder.matches(customerLoginDTO.getPassword(), customer.getPassword())) {
-			throw new RuntimeException("Invalid credentials");
+			throw new RuntimeException("Invalid email or password");
 		}
 
 		if (!customer.isVerified()) {

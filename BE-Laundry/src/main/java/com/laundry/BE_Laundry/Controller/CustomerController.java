@@ -40,34 +40,61 @@ public class CustomerController {
 			customerService.registerCustomer(registerDTO);
 			return ResponseEntity.ok("Registration successfull. Verify your account using the token");
 		} catch (IllegalArgumentException ex) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Registration failed:" + ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred:" + ex.getMessage());
 		}
+		
 	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody CustomerLoginDTO customerLoginDTO) {
-		customerService.login(customerLoginDTO);
-		return ResponseEntity.ok("Login Successfuly");
+		try {
+			customerService.login(customerLoginDTO);
+			return ResponseEntity.ok("Login Successfuly");
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed:" + ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
+		}
 		
 	}
 
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestParam String email) {
-		customerService.logout(email);
-		return ResponseEntity.ok("Logout successfuly");
+		try {
+			customerService.logout(email);
+			return ResponseEntity.ok("Logout successfuly");
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Logout failed:" + ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
+		}
 	}
 
 	@PutMapping("/update-password")
 	public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordRequestDTO updatePasswordDTO) {
-		customerService.updatePassword(updatePasswordDTO);
-		return ResponseEntity.ok("Update password successfuly");
+		try {
+			customerService.updatePassword(updatePasswordDTO);
+			return ResponseEntity.ok("Update password successfuly");
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update password failed:" + ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
+		}
 
 	}
 	
 	@PostMapping("/verify")
 	public ResponseEntity<String> verifyCustomer(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO){
-		customerService.verifyCustomer(verifyTokenDTO);
-		return ResponseEntity.ok("Account verified successfuly");
+		try {
+			customerService.verifyCustomer(verifyTokenDTO);
+			return ResponseEntity.ok("Account verified successfuly");
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed:" + ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
+		}
 		
 	}
 
