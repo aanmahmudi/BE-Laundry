@@ -50,9 +50,12 @@ public class CustomerController {
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody CustomerLoginDTO customerLoginDTO) {
 		try {
-			customerService.login(customerLoginDTO);
-			return ResponseEntity.ok("Login Successfuly");
-		} catch (IllegalArgumentException ex) {
+			if (customerService.login(customerLoginDTO)) {
+				return ResponseEntity.ok("Login Successfuly");
+			}else {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed");
+			}	
+		} catch (RuntimeException ex) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed:" + ex.getMessage());
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
@@ -116,6 +119,7 @@ public class CustomerController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+		customerService.deleteCustomer(id);
 		return ResponseEntity.noContent().build();
 	}
 

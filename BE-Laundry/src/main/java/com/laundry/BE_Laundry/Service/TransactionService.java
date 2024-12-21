@@ -123,7 +123,7 @@ public class TransactionService {
 	// Mapping transaction ke DTO
 	private TransactionResponseDTO mapToResponseDTO(Transaction transaction) {
 		return TransactionResponseDTO.builder().id(transaction.getId())
-				.customerName(transaction.getCustomer().getName()).productName(transaction.getProduct().getName())
+				.customerName(transaction.getCustomer().getUsername()).productName(transaction.getProduct().getName())
 				.quantity(transaction.getQuantity()).totalPrice(transaction.getTotalPrice())
 				.transactionDate(transaction.getTransactionDate()).paymentStatus(transaction.getPaymentStatus())
 				.paymentAmount(transaction.getPaymentAmount()).build();

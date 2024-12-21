@@ -23,14 +23,17 @@ spring:
           batch_size: 100
         order_inserts: true
     show-sql: true
-    
----
-spring:
-  config:
-    activate:
-      on-profile: test
+
 server:
-  port: 5052
+  servlet:
+     context-path: /laundry    
+---
+#spring:
+#  config:
+#    activate:
+#      on-profile: test
+#server:
+#  port: 5052
 
 
 ---
@@ -39,12 +42,12 @@ spring:
     activate:
       on-profile: development
 server:
-  port: 5053
+  port: 9080
 
 ---
-spring:
-  config:
-    activate:
-      on-profile: production
-server:
-  port : 102
+#spring:
+#  config:
+#    activate:
+#      on-profile: production
+#server:
+#  port : 102

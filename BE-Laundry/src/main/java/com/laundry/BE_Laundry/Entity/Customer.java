@@ -27,7 +27,7 @@ public class Customer {
 	private Long id;
 	
 	@Column(nullable = false)
-	private String name;
+	private String username;
 	
 	@Column(nullable = true)
 	private String address;

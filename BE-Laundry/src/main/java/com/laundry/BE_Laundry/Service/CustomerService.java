@@ -37,7 +37,7 @@ public class CustomerService {
 		
 	private Customer mapToCustomer(RegisterRequestDTO registerDTO) {
 		Customer customer = new Customer();
-		customer.setName(registerDTO.getName());
+		customer.setUsername(registerDTO.getName());
 		customer.setEmail(registerDTO.getEmail());
 		customer.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 		customer.setAddress(registerDTO.getAddress());
@@ -67,6 +67,21 @@ public class CustomerService {
 		}
 
 		return true;
+	}
+	
+	public boolean loginWithForm(String username, String password) {
+		Customer customer = customerRepository.findByEmail(username)
+				.orElseThrow(()-> new RuntimeException("Customer not found"));
+		
+		if (!passwordEncoder.matches(password, customer.getPassword())) {
+			throw new RuntimeException("Invalid Email or Password");
+		}
+		
+		if (!customer.isVerified()) {
+			throw new RuntimeException("Account not verified");
+		}
+		return true;
+		
 	}
 
 	public void updatePassword(UpdatePasswordRequestDTO updatePasswordDTO) {
@@ -119,7 +134,7 @@ public class CustomerService {
 	public Customer updateCustomer(Long id, Customer updatedCustomer) {
 		Customer existingCustomer = customerRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
-		existingCustomer.setName(updatedCustomer.getName());
+		existingCustomer.setUsername(updatedCustomer.getUsername());
 		existingCustomer.setAddress(updatedCustomer.getAddress());
 		existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
 		return customerRepository.save(existingCustomer);
