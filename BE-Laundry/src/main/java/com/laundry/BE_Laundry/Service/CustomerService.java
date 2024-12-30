@@ -24,17 +24,17 @@ public class CustomerService {
 	private final PasswordEncoder passwordEncoder;
 
 	public void registerCustomer(RegisterRequestDTO registerDTO) {
-		if(customerRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
+		if (customerRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
 			throw new IllegalArgumentException("Email already exist");
 		}
-		
-		//Map dari DTO ke entity
+
+		// Map dari DTO ke entity
 		Customer customer = mapToCustomer(registerDTO);
-		
-		//Simpan ke database
+
+		// Simpan ke database
 		customerRepository.save(customer);
 	}
-		
+
 	private Customer mapToCustomer(RegisterRequestDTO registerDTO) {
 		Customer customer = new Customer();
 		customer.setUsername(registerDTO.getName());
@@ -44,45 +44,35 @@ public class CustomerService {
 		customer.setPhoneNumber(registerDTO.getPhoneNumber());
 		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
 		customer.setVerificationToken(UUID.randomUUID().toString());
-		
-		//Set expiry 2menit
-		//customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+
+		// Set expiry 2menit
+		// customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
 		customer.setTokenExpiry(LocalDateTime.now().minusMinutes(2));
 		customer.setVerified(false);
-		
+
 		return customer;
-		
+
 	}
 
 	public boolean login(CustomerLoginDTO customerLoginDTO) {
 		Customer customer = customerRepository.findByEmail(customerLoginDTO.getEmail())
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
+		
+		System.out.println("Verifying passowrd for user: " + customer.getEmail());
 
 		if (!passwordEncoder.matches(customerLoginDTO.getPassword(), customer.getPassword())) {
+			System.out.println("Password mismatch for user: " + customer.getEmail());
 			throw new RuntimeException("Invalid email or password");
 		}
 
 		if (!customer.isVerified()) {
+			System.out.println("Account is not verified for user: " + customer.getEmail());
 			throw new RuntimeException("Account not verified");
 		}
 
 		return true;
 	}
-	
-	public boolean loginWithForm(String username, String password) {
-		Customer customer = customerRepository.findByEmail(username)
-				.orElseThrow(()-> new RuntimeException("Customer not found"));
-		
-		if (!passwordEncoder.matches(password, customer.getPassword())) {
-			throw new RuntimeException("Invalid Email or Password");
-		}
-		
-		if (!customer.isVerified()) {
-			throw new RuntimeException("Account not verified");
-		}
-		return true;
-		
-	}
+
 
 	public void updatePassword(UpdatePasswordRequestDTO updatePasswordDTO) {
 		Customer customer = customerRepository.findByEmail(updatePasswordDTO.getEmail())

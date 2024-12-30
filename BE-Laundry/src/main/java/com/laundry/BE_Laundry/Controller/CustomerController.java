@@ -3,9 +3,14 @@ package com.laundry.BE_Laundry.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.laundry.BE_Laundry.DTO.ApiResponse;
 import com.laundry.BE_Laundry.DTO.CustomerLoginDTO;
 import com.laundry.BE_Laundry.DTO.RegisterRequestDTO;
 import com.laundry.BE_Laundry.DTO.UpdatePasswordRequestDTO;
@@ -34,6 +39,8 @@ public class CustomerController {
 
 	private final CustomerService customerService;
 
+	private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+
 	@PostMapping("/register")
 	public ResponseEntity<String> registerCustomer(@RequestBody @Valid RegisterRequestDTO registerDTO) {
 		try {
@@ -44,23 +51,45 @@ public class CustomerController {
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred:" + ex.getMessage());
 		}
-		
+
 	}
-	
+
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody CustomerLoginDTO customerLoginDTO) {
-		try {
-			if (customerService.login(customerLoginDTO)) {
-				return ResponseEntity.ok("Login Successfuly");
-			}else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed");
-			}	
-		} catch (RuntimeException ex) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed:" + ex.getMessage());
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
+	public ResponseEntity<ApiResponse> login(@Valid @RequestBody CustomerLoginDTO customerLoginDTO,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			String errorMessage = bindingResult.getAllErrors().stream().map(ObjectError::getDefaultMessage)
+					.collect(Collectors.joining(", "));
+			logger.warn("Validation failed: {}", errorMessage);
+			return ResponseEntity.badRequest().body(new ApiResponse("Invalid input: " + errorMessage, false));
 		}
-		
+
+		logger.info("Login attempt for email: {}", customerLoginDTO.getEmail());
+		try {
+			boolean isLoginSuccessful = customerService.login(customerLoginDTO);
+			if (isLoginSuccessful) {
+				logger.info("Login successful for email: {}", customerLoginDTO.getEmail());
+				return ResponseEntity.ok(new ApiResponse("Login Successfuly", true));
+			} else {
+				logger.warn("Login failed for email: {} due to {}", customerLoginDTO.getEmail());
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("Login Failed", false));
+			}
+		} catch (RuntimeException ex) {
+			logger.error("Login failed for email: {} due to {}", customerLoginDTO.getEmail(), ex.getMessage());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(new ApiResponse("Login failed: " + ex.getMessage(), false));
+		} catch (Exception ex) {
+			logger.error("Unexpected error occurred during login: {}", ex.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponse("An error occurred: " + ex.getMessage(), false));
+
+		}
+
+	}
+
+	@GetMapping("/login")
+	public String loginPage() {
+		return "login"; // pastikan file login.html ada di src/main/resources/templates
 	}
 
 	@PostMapping("/logout")
@@ -87,9 +116,9 @@ public class CustomerController {
 		}
 
 	}
-	
+
 	@PostMapping("/verify")
-	public ResponseEntity<String> verifyCustomer(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO){
+	public ResponseEntity<String> verifyCustomer(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO) {
 		try {
 			customerService.verifyCustomer(verifyTokenDTO);
 			return ResponseEntity.ok("Account verified successfuly");
@@ -98,7 +127,7 @@ public class CustomerController {
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
 		}
-		
+
 	}
 
 	@GetMapping

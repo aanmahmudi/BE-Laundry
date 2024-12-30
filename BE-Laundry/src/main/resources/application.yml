@@ -1,6 +1,8 @@
 logging:
   level:
     '[com.laundry.BE_Laundry]': TRACE
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
     
 spring:
   datasource:
@@ -26,7 +28,12 @@ spring:
 
 server:
   servlet:
-     context-path: /laundry    
+     context-path: /BE-Laundry-0.0.1-SNAPSHOT
+
+     
+  thymeleaf:  
+    prefix: classpath:/templates/
+    suffix: .html
 ---
 #spring:
 #  config:
@@ -42,7 +49,8 @@ spring:
     activate:
       on-profile: development
 server:
-  port: 9080
+  port: 9090
+
 
 ---
 #spring:
