@@ -43,12 +43,16 @@ public class CustomerController {
 
 	@PostMapping("/register")
 	public ResponseEntity<String> registerCustomer(@RequestBody @Valid RegisterRequestDTO registerDTO) {
+		logger.info("Register endpoint hit with data: {}", registerDTO);
 		try {
 			customerService.registerCustomer(registerDTO);
+			logger.info("Registration successful for email: {}",registerDTO.getEmail());
 			return ResponseEntity.ok("Registration successfull. Verify your account using the token");
 		} catch (IllegalArgumentException ex) {
+			logger.error("Registration failed: {}", ex.getMessage());
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Registration failed:" + ex.getMessage());
 		} catch (Exception ex) {
+			logger.error("An Unexpected : {}",ex.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred:" + ex.getMessage());
 		}
 

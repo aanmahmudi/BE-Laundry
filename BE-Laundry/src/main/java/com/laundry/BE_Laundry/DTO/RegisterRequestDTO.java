@@ -10,7 +10,7 @@ public class RegisterRequestDTO {
 	private Long id;
 	
 	@NotBlank(message = "Name is required")
-	private String name;
+	private String username;
 	private String address;
 	private String phoneNumber;
 	

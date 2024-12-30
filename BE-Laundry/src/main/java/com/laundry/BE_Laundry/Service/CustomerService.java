@@ -37,7 +37,7 @@ public class CustomerService {
 
 	private Customer mapToCustomer(RegisterRequestDTO registerDTO) {
 		Customer customer = new Customer();
-		customer.setUsername(registerDTO.getName());
+		customer.setUsername(registerDTO.getUsername());
 		customer.setEmail(registerDTO.getEmail());
 		customer.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 		customer.setAddress(registerDTO.getAddress());
@@ -46,8 +46,8 @@ public class CustomerService {
 		customer.setVerificationToken(UUID.randomUUID().toString());
 
 		// Set expiry 2menit
-		// customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
-		customer.setTokenExpiry(LocalDateTime.now().minusMinutes(2));
+		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+//		customer.setTokenExpiry(LocalDateTime.now().minusMinutes(2));
 		customer.setVerified(false);
 
 		return customer;
