@@ -30,7 +30,10 @@ public class SecurityConfig{
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/api/customers/register",
 						"/api/customers/verify", 
-						"/api/customers/login").permitAll()
+						"/api/customers/login",
+						"/api/customers",
+						"/api/customers/{id}").permitAll()
+						
 				.anyRequest().authenticated()
 			)
 			.addFilterAfter(new CustomLoggingFilter(), UsernamePasswordAuthenticationFilter.class)

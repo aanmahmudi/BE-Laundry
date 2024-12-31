@@ -46,13 +46,13 @@ public class CustomerController {
 		logger.info("Register endpoint hit with data: {}", registerDTO);
 		try {
 			customerService.registerCustomer(registerDTO);
-			logger.info("Registration successful for email: {}",registerDTO.getEmail());
+			logger.info("Registration successful for email: {}", registerDTO.getEmail());
 			return ResponseEntity.ok("Registration successfull. Verify your account using the token");
 		} catch (IllegalArgumentException ex) {
 			logger.error("Registration failed: {}", ex.getMessage());
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Registration failed:" + ex.getMessage());
 		} catch (Exception ex) {
-			logger.error("An Unexpected : {}",ex.getMessage());
+			logger.error("An Unexpected : {}", ex.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred:" + ex.getMessage());
 		}
 
@@ -89,11 +89,6 @@ public class CustomerController {
 
 		}
 
-	}
-
-	@GetMapping("/login")
-	public String loginPage() {
-		return "login"; // pastikan file login.html ada di src/main/resources/templates
 	}
 
 	@PostMapping("/logout")
@@ -135,14 +130,28 @@ public class CustomerController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Customer>> getAllCustomers() {
-		return ResponseEntity.ok(customerService.getAllCustomers());
+	public ResponseEntity<?> getAllCustomers() {
+		List<Customer> customer = customerService.getAllCustomers();
+		if (customer.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Customers found.");
+		}
+		return ResponseEntity.ok(customer);
 
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
-		return ResponseEntity.ok(customerService.getCustomerById(id));
+	public ResponseEntity<?> getCustomerById(@PathVariable Long id) {
+		try {
+			Customer customer = customerService.getCustomerById(id);
+			if (customer != null) {
+				return ResponseEntity.ok(customer);
+			}else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Customers found.");
+			}
+		}catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+									.body("An error occured: " + ex.getMessage());
+		}
 	}
 
 	@PutMapping("/{id}")
