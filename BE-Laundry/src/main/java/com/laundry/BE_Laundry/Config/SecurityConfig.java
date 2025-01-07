@@ -31,8 +31,18 @@ public class SecurityConfig{
 				.requestMatchers("/api/customers/register",
 						"/api/customers/verify", 
 						"/api/customers/login",
+						"/api/customers/logout",
+						"/api/customers/update-password",
 						"/api/customers",
-						"/api/customers/{id}").permitAll()
+						"/api/customers/{id}",
+						"api/products",
+						"api/products/{id}",
+						"api/transactions",
+						"api/transactions/{id}",
+						"api/transactions/payment",
+						"api/transactions/paid",
+						"api/transactions/{id}/payment")
+				.permitAll()
 						
 				.anyRequest().authenticated()
 			)

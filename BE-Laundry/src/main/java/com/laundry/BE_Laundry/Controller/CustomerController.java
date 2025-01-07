@@ -92,12 +92,13 @@ public class CustomerController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(@RequestParam String email) {
+	public ResponseEntity<String> logout(@RequestBody Map<String, String> payload) {
+		String email = payload.get("email");
+		if (email == null || email.isEmpty()) {
+			return ResponseEntity.badRequest().body("Email is required.");
+		}
 		try {
-			customerService.logout(email);
-			return ResponseEntity.ok("Logout successfuly");
-		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Logout failed:" + ex.getMessage());
+			return ResponseEntity.ok("Logout successfuly for email : " + email);
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
 		}
@@ -145,12 +146,11 @@ public class CustomerController {
 			Customer customer = customerService.getCustomerById(id);
 			if (customer != null) {
 				return ResponseEntity.ok(customer);
-			}else {
+			} else {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Customers found.");
 			}
-		}catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-									.body("An error occured: " + ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured: " + ex.getMessage());
 		}
 	}
 
