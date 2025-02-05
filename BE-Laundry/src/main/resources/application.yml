@@ -8,7 +8,7 @@ spring:
   docker:
     compose:
       enabled: true
-      file: docker-compose.yml
+      #      file: compose.yml
       
   datasource:
     hikari:
@@ -17,6 +17,7 @@ spring:
       max-lifetime: 1800000
       maximum-pool-size: 10
     url: jdbc:postgresql://host.docker.internal:5432/db-laundry
+    #    url: jdbc:postgresql://localhost:5432/db-laundry
     driver-class-name: org.postgresql.Driver
     username: subrutin
     password: subrutin
