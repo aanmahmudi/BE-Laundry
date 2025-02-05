@@ -21,52 +21,53 @@ import com.laundry.BE_Laundry.Service.TransactionService;
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
-	
+
 	private final TransactionService transactionService;
-	
+
 	public TransactionController(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
-	
-	//membuat transaksi baru
+
+	// membuat transaksi baru
 	@PostMapping
 	public ResponseEntity<TransactionResponseDTO> createTransaction(@RequestBody TransactionRequestDTO requestDTO) {
 		TransactionResponseDTO response = transactionService.createTransaction(requestDTO);
-		return ResponseEntity.ok(response);		
+		return ResponseEntity.ok(response);
 	}
-	
-	//mendapatkan semua transaksi
+
+	// mendapatkan semua transaksi
 	@GetMapping
-	public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions(){
+	public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions() {
 		List<TransactionResponseDTO> transactions = transactionService.getAllTransactions();
 		return ResponseEntity.ok(transactions);
 	}
-	
-	//mendapatkan transaksi berdasarkan id
+
+	// mendapatkan transaksi berdasarkan id
 	@GetMapping("/{id}")
-	public ResponseEntity <TransactionResponseDTO> getTransactionById(@PathVariable Long id) {
+	public ResponseEntity<TransactionResponseDTO> getTransactionById(@PathVariable Long id) {
 		TransactionResponseDTO response = transactionService.getTransactionById(id);
 		return ResponseEntity.ok(response);
-		
+
 	}
-	
-	//melakukan pembayaran
+
+	// melakukan pembayaran
 	@PostMapping("/payment")
-	public ResponseEntity<TransactionResponseDTO> makePayment(@RequestBody PaymentRequestDTO paymentRequest){
+	public ResponseEntity<TransactionResponseDTO> makePayment(@RequestBody PaymentRequestDTO paymentRequest) {
 		return ResponseEntity.ok(transactionService.makePayment(paymentRequest));
 	}
-	
-	//Transaksi yang sudah dibayar
+
+	// Transaksi yang sudah dibayar
 	@GetMapping("/paid")
-	public ResponseEntity<List<TransactionResponseDTO>> getPaidTransactions(){
+	public ResponseEntity<List<TransactionResponseDTO>> getPaidTransactions() {
 		List<TransactionResponseDTO> transactions = transactionService.getPaidTransactions();
 		return ResponseEntity.ok(transactions);
 	}
 	
-	@PutMapping("/{id}/payment")
-	public ResponseEntity<TransactionResponseDTO> makePayment(@PathVariable Long id, @RequestParam BigDecimal paymentAmount){
-		TransactionResponseDTO transaction = transactionService.makePayment(id, paymentAmount);
-		return ResponseEntity.ok(transaction);
+	@GetMapping("/unpaid")
+	public ResponseEntity<List<TransactionResponseDTO>> getUnpaidTrasanctions(){
+		List<TransactionResponseDTO> transactions = transactionService.getUnpaidTransactions();
+		return ResponseEntity.ok(transactions);
+		
 	}
 
 }

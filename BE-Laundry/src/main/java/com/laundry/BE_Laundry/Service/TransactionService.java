@@ -60,6 +60,13 @@ public class TransactionService {
 				.filter(transaction -> "PAID".equalsIgnoreCase(transaction.getPaymentStatus()))
 				.map(this::mapToResponseDTO).collect(Collectors.toList());
 	}
+	
+	public List<TransactionResponseDTO> getUnpaidTransactions(){
+		return transactionRepository.findAll().stream()
+				.filter(transaction -> "UNPAID".equalsIgnoreCase(transaction.getPaymentStatus()))
+				.map(this::mapToResponseDTO).collect(Collectors.toList());
+		
+	}
 
 	// get data all in
 	public List<TransactionResponseDTO> getAllTransactions() {

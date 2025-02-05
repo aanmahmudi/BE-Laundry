@@ -3,6 +3,8 @@ package com.laundry.BE_Laundry.Entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,6 +27,10 @@ public class Customer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 
 	private Long id;
+	
+	@Column(name = "created_at", updatable = false)
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 	
 	@Column(nullable = false)
 	private String username;

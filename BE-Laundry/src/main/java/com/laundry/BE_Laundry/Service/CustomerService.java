@@ -37,6 +37,7 @@ public class CustomerService {
 
 	private Customer mapToCustomer(RegisterRequestDTO registerDTO) {
 		Customer customer = new Customer();
+		customer.setCreatedAt(registerDTO.getCreatedAt());
 		customer.setUsername(registerDTO.getUsername());
 		customer.setEmail(registerDTO.getEmail());
 		customer.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
@@ -57,7 +58,7 @@ public class CustomerService {
 	public boolean login(CustomerLoginDTO customerLoginDTO) {
 		Customer customer = customerRepository.findByEmail(customerLoginDTO.getEmail())
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
-		
+
 		System.out.println("Verifying passowrd for user: " + customer.getEmail());
 
 		if (!passwordEncoder.matches(customerLoginDTO.getPassword(), customer.getPassword())) {
@@ -72,7 +73,6 @@ public class CustomerService {
 
 		return true;
 	}
-
 
 	public void updatePassword(UpdatePasswordRequestDTO updatePasswordDTO) {
 		Customer customer = customerRepository.findByEmail(updatePasswordDTO.getEmail())

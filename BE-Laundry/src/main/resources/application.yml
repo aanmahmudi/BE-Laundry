@@ -5,19 +5,28 @@ logging:
     org.springframework.web: DEBUG
     
 spring:
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yml
+      
   datasource:
     hikari:
-      connection-timeout: 600000
+      connection-timeout: 300000
       idle-timeout: 600000
       max-lifetime: 1800000
       maximum-pool-size: 10
-    url: jdbc:postgresql://127.0.0.1/db-laundry
+    url: jdbc:postgresql://host.docker.internal:5432/db-laundry
+    driver-class-name: org.postgresql.Driver
     username: subrutin
     password: subrutin
   jpa:
     database: POSTGRESQL
     hibernate:
       ddl-auto: update
+  sql:
+    init:
+      mode: always
     properties:
      hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -28,7 +37,7 @@ spring:
 
 server:
   servlet:
-     context-path: /BE-Laundry-0.0.1-SNAPSHOT
+     context-path: 
 
      
   thymeleaf:  
