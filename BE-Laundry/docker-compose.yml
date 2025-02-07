@@ -5,8 +5,16 @@ services:
     image: postgres
     restart: always
     ports: 
-      - 5432:5432
+      - "5432:5432"
     environment:
-      POSTGRES_USER: subrutin #your required name 
-      POSTGRES_PASSWORD: subrutin # your required password 
+      POSTGRES_USER: subrutin
+      POSTGRES_PASSWORD: subrutin
       POSTGRES_DB: db-laundry
+
+  app:
+    build: .
+    restart: always  # Perbaiki penulisan (huruf kecil)
+    ports:
+      - "8080:8080"  # Perbaiki indentasi
+    depends_on:
+      - db
