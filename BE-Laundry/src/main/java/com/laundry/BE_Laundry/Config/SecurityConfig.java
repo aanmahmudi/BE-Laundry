@@ -26,22 +26,24 @@ public class SecurityConfig{
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http.csrf().disable()
-			.cors().and()
+			.cors().disable()
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/customers/register",
+				.requestMatchers(
+						"/api/customers/register",
 						"/api/customers/verify", 
 						"/api/customers/login",
 						"/api/customers/logout",
 						"/api/customers/update-password",
 						"/api/customers",
 						"/api/customers/{id}",
-						"api/products",
-						"api/products/{id}",
-						"api/transactions",
-						"api/transactions/{id}",
-						"api/transactions/payment",
-						"api/transactions/paid",
-						"api/transactions/{id}/payment")
+						"/api/products",
+						"/api/products/{id}",
+						"/api/transactions",
+						"/api/transactions/{id}",
+						"/api/transactions/payment",
+						"/api/transactions/paid",
+						"/api/transactions/{id}/payment",
+						"/error")
 				.permitAll()
 						
 				.anyRequest().authenticated()
@@ -71,7 +73,7 @@ public class SecurityConfig{
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOrigins(List.of("*"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(List.of("*"));
+		config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
 		config.addExposedHeader("Authorization");
 		
 		

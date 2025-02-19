@@ -1,11 +1,13 @@
 package com.laundry.BE_Laundry.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.laundry.BE_Laundry.DTO.CustomerLoginDTO;
 import com.laundry.BE_Laundry.DTO.RegisterRequestDTO;

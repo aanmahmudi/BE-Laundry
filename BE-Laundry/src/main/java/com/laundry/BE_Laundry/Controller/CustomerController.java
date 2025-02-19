@@ -1,6 +1,5 @@
 package com.laundry.BE_Laundry.Controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -8,6 +7,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -19,8 +19,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laundry.BE_Laundry.DTO.ApiResponse;
 import com.laundry.BE_Laundry.DTO.CustomerLoginDTO;
 import com.laundry.BE_Laundry.DTO.RegisterRequestDTO;
@@ -28,6 +34,7 @@ import com.laundry.BE_Laundry.DTO.UpdatePasswordRequestDTO;
 import com.laundry.BE_Laundry.DTO.VerifyTokenDTO;
 import com.laundry.BE_Laundry.Entity.Customer;
 import com.laundry.BE_Laundry.Service.CustomerService;
+import com.laundry.BE_Laundry.Service.FileStorageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +48,8 @@ public class CustomerController {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
-	@PostMapping("/register")
-	public ResponseEntity<String> registerCustomer(@RequestBody @Valid RegisterRequestDTO registerDTO) {
+	@PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> registerCustomer(@RequestBody RegisterRequestDTO registerDTO) {
 		logger.info("Register endpoint hit with data: {}", registerDTO);
 		try {
 			customerService.registerCustomer(registerDTO);
