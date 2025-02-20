@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,7 +27,7 @@ public class SecurityConfig{
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http.csrf().disable()
-			.cors().disable()
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(
 						"/api/customers/register",
@@ -36,6 +37,7 @@ public class SecurityConfig{
 						"/api/customers/update-password",
 						"/api/customers",
 						"/api/customers/{id}",
+						"/api/customers/upload",
 						"/api/products",
 						"/api/products/{id}",
 						"/api/transactions",
@@ -73,7 +75,7 @@ public class SecurityConfig{
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOrigins(List.of("*"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
+		config.setAllowedHeaders(List.of("Content-Type", "Authorization", "multipart/form-data"));
 		config.addExposedHeader("Authorization");
 		
 		

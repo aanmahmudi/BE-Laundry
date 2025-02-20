@@ -43,10 +43,17 @@ spring:
   flyway:
     enabled: false
     baseline-on-migrate: true
+  
+  web:
+    resources:
+      static-locations: file:uploads/
       
 server:
   servlet:
-    content-path:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
 
   thymeleaf:  
     prefix: classpath:/templates/

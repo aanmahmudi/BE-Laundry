@@ -45,6 +45,7 @@ public class CustomerService {
 		customer.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 		customer.setAddress(registerDTO.getAddress());
 		customer.setPhoneNumber(registerDTO.getPhoneNumber());
+		customer.setPhotoUrl(registerDTO.getPhotoUrl());
 		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
 		customer.setVerificationToken(UUID.randomUUID().toString());
 

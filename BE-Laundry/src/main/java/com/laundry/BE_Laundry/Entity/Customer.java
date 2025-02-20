@@ -47,6 +47,10 @@ public class Customer {
 	@Column(nullable = false)
 	private String password;
 	
+	@Column(name = "photo_url")
+	private String photoUrl;
+	
+	
 	private String verificationToken;
 	private boolean isVerified = false;
 	private LocalDateTime tokenExpiry;
