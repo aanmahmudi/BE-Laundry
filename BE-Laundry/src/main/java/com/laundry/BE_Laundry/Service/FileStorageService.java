@@ -2,24 +2,61 @@ package com.laundry.BE_Laundry.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.laundry.BE_Laundry.Entity.Customer;
+import com.laundry.BE_Laundry.Entity.CustomerPhoto;
+import com.laundry.BE_Laundry.Repository.CustomerPhotoRepository;
+import com.laundry.BE_Laundry.Repository.CustomerRepository;
+
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class FileStorageService {
 
-	private final String UPLOAD_DIR = "uploads";
+	private static final String UPLOAD_DIR = "uploads/";
 
-	@PostConstruct
-	public void init() {
-		try {
-			Files.createDirectories(Paths.get(UPLOAD_DIR));
-			System.out.println("Folder upload disiapkan di: " + UPLOAD_DIR);
-		} catch (IOException e) {
-			throw new RuntimeException("Gagal membuat folder upload", e);
+	private final CustomerRepository customerRepository;
+	private final CustomerPhotoRepository customerPhotoRepository;
+
+	public String uploadFile(MultipartFile file, Long customerId) throws IOException {
+		// buat folder
+		Files.createDirectories(Paths.get(UPLOAD_DIR));
+
+		// generate name file unik
+		String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+		Path filePath = Paths.get(UPLOAD_DIR + filename);
+		Files.write(filePath, file.getBytes());
+
+		// generate URL file
+		String fileUrl = "http://localhost:8080/uploads/" + filename;
+
+		// simpan ke database
+		Optional<Customer> customerOptional = customerRepository.findById(customerId);
+
+		if (customerOptional.isPresent()) {
+			Customer customer = customerOptional.get();
+
+			CustomerPhoto photo = new CustomerPhoto();
+			photo.setCustomer(customer);
+			photo.setFilename(filename);
+			photo.setFileUrl(fileUrl);
+			customerPhotoRepository.save(photo);
+
+			return fileUrl;
+		} else {
+			throw new RuntimeException("Customer not found");
 		}
+
 	}
 
 }

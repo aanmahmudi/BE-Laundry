@@ -8,6 +8,7 @@ import com.laundry.BE_Laundry.Entity.Customer;
 
 public interface CustomerRepository extends JpaRepository <Customer, Long>{
 	
+	Optional<Customer> findById(Long id);
 	Optional<Customer> findByEmail(String email);
 	Optional<Customer> findByVerificationToken(String token);
 	Optional<Customer> findByUsername(String username);
