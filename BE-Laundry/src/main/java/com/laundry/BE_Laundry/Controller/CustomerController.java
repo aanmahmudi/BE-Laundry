@@ -34,7 +34,7 @@ import com.laundry.BE_Laundry.DTO.UpdatePasswordRequestDTO;
 import com.laundry.BE_Laundry.DTO.VerifyTokenDTO;
 import com.laundry.BE_Laundry.Entity.Customer;
 import com.laundry.BE_Laundry.Service.CustomerService;
-import com.laundry.BE_Laundry.Service.FileStorageService;
+import com.laundry.BE_Laundry.Service.PhotoStorageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

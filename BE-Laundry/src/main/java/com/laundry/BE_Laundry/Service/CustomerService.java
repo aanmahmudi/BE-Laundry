@@ -44,8 +44,11 @@ public class CustomerService {
 		customer.setEmail(registerDTO.getEmail());
 		customer.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 		customer.setAddress(registerDTO.getAddress());
+		customer.setPlaceOfBirth(registerDTO.getPlaceOfBirth());
+		customer.setDateOfBirth(registerDTO.getDateOfBirth());
 		customer.setPhoneNumber(registerDTO.getPhoneNumber());
 		customer.setPhotoUrl(registerDTO.getPhotoUrl());
+		customer.setDocumentUrl(registerDTO.getDocumentUrl());
 		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
 		customer.setVerificationToken(UUID.randomUUID().toString());
 
@@ -130,6 +133,8 @@ public class CustomerService {
 		existingCustomer.setUsername(updatedCustomer.getUsername());
 		existingCustomer.setAddress(updatedCustomer.getAddress());
 		existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
+		existingCustomer.setPlaceOfBirth(updatedCustomer.getPlaceOfBirth());
+		existingCustomer.setDateOfBirth(updatedCustomer.getDateOfBirth());
 		return customerRepository.save(existingCustomer);
 
 	}

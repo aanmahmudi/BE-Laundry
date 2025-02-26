@@ -7,56 +7,58 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.laundry.BE_Laundry.Entity.Customer;
-import com.laundry.BE_Laundry.Entity.CustomerPhoto;
-import com.laundry.BE_Laundry.Repository.CustomerPhotoRepository;
+import com.laundry.BE_Laundry.Entity.CustomerDocument;
+import com.laundry.BE_Laundry.Repository.CustomerDocumentRepository;
 import com.laundry.BE_Laundry.Repository.CustomerRepository;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class FileStorageService {
-
-	private static final String UPLOAD_DIR = "uploads/";
-
+public class DocumentStorageService {
+	
+	private static final String UPLOAD_DIR = "uploads/pdf/";
+	
 	private final CustomerRepository customerRepository;
-	private final CustomerPhotoRepository customerPhotoRepository;
-
-	public String uploadFile(MultipartFile file, Long customerId) throws IOException {
-		// buat folder
+	private final CustomerDocumentRepository documentRepository;
+	
+	public String uploadPDF(MultipartFile file, Long customerId)throws IOException{
+		//Format PDF
+		if (!file.getContentType().equals("application/pdf")) {
+			throw new RuntimeException("Invalid file Type. Only PDF files are allowed.");
+		}
+		
+		//create folder
 		Files.createDirectories(Paths.get(UPLOAD_DIR));
-
-		// generate name file unik
+		
+		//generate name file unik
 		String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-		Path filePath = Paths.get(UPLOAD_DIR + filename);
+		Path filePath = Paths.get(UPLOAD_DIR, filename);
 		Files.write(filePath, file.getBytes());
-
-		// generate URL file
-		String fileUrl = "http://localhost:8080/uploads/" + filename;
-
-		// simpan ke database
+		
+		String fileUrl = "http://localhost:8080/uploads/pdf/" + filename;
+		
 		Optional<Customer> customerOptional = customerRepository.findById(customerId);
-
+		
 		if (customerOptional.isPresent()) {
 			Customer customer = customerOptional.get();
-
-			CustomerPhoto photo = new CustomerPhoto();
-			photo.setCustomer(customer);
-			photo.setFilename(filename);
-			photo.setFileUrl(fileUrl);
-			customerPhotoRepository.save(photo);
-
+			
+			CustomerDocument document = new CustomerDocument();
+			document.setCustomer(customer);
+			document.setFileName(filename);
+			document.setFileUrl(fileUrl);
+			documentRepository.save(document);
+			
 			return fileUrl;
-		} else {
+			
+		}else {
 			throw new RuntimeException("Customer not found");
 		}
-
+		
 	}
 
 }

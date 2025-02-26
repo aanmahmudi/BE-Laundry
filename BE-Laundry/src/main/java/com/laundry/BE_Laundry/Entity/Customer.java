@@ -1,9 +1,12 @@
 package com.laundry.BE_Laundry.Entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,6 +38,13 @@ public class Customer {
 	@Column(nullable = false)
 	private String username;
 	
+	@Column(nullable = false)
+	private String placeOfBirth;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@Column(name = "date_of_birth", nullable = false)
+	private LocalDate dateOfBirth;
+	
 	@Column(nullable = true)
 	private String address;
 	
@@ -49,6 +59,9 @@ public class Customer {
 	
 	@Column(name = "photo_url")
 	private String photoUrl;
+	
+	@Column(name = "document_pdf")
+	private String documentUrl;
 	
 	
 	private String verificationToken;
