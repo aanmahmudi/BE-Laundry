@@ -48,6 +48,18 @@ spring:
     resources:
       static-locations: file:uploads/
       
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: YOUR_MAILTRAP_USERNAME
+    password: YOUR_MAILTRAP_PASSWORD
+    properties:
+      mail:
+        smtp:
+          auth: true
+          stattls:
+            enable: true
+      
 server:
   servlet:
     multipart:

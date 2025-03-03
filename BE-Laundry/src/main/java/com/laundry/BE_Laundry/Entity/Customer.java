@@ -68,6 +68,12 @@ public class Customer {
 	private boolean isVerified = false;
 	private LocalDateTime tokenExpiry;
 	
+	@Column(name = "otp_code")
+	private String otpCode;
+	
+	@Column(name = "otp_expiry")
+	private LocalDateTime otpExpiry;
+	
 	@Enumerated(EnumType.STRING)
 	public RoleType role;
 	

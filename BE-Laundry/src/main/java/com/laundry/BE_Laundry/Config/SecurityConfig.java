@@ -39,6 +39,8 @@ public class SecurityConfig{
 						"/api/customers/{id}",
 						"/api/customers/upload/photo",
 						"/api/customers/upload/pdf",
+						"/api/otp/send",
+						"/api/otp/verify",
 						"/api/products",
 						"/api/products/{id}",
 						"/api/transactions",
