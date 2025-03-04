@@ -74,7 +74,7 @@ public class CustomerService {
 
 		if (!customer.isVerified()) {
 			System.out.println("Account is not verified for user: " + customer.getEmail());
-			throw new RuntimeException("Account not verified");
+			throw new RuntimeException("Account not verified. Please Verify using OTP");
 		}
 
 		return true;

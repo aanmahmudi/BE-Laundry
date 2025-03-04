@@ -52,7 +52,11 @@ public class OTPService {
 		return true;
 	}
 	private String generateOTP() {
-		return String.format("%06d", new Random().nextInt(999999));
+		//OTP testing
+		return "123456";
+		
+		//OTP production
+//		return String.format("%06d", new Random().nextInt(999999));
 	}
 
 }
