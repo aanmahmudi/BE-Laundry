@@ -3,6 +3,7 @@ package com.laundry.BE_Laundry.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,9 +52,12 @@ public class CustomerService {
 		customer.setDocumentUrl(registerDTO.getDocumentUrl());
 		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
 		customer.setVerificationToken(UUID.randomUUID().toString());
+		String otp = String.format("%06d", new Random().nextInt(999999));
+		customer.setOtpCode(otp);
 
 		// Set expiry 2menit
 		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+		customer.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
 //		customer.setTokenExpiry(LocalDateTime.now().minusMinutes(2));
 		customer.setVerified(false);
 
@@ -105,6 +109,32 @@ public class CustomerService {
 		}
 
 		customer.setVerified(true);
+		customer.setOtpCode(null);
+		customer.setOtpExpiry(null);
+		customer.setVerificationToken(null);
+		customer.setTokenExpiry(null);
+
+		customerRepository.save(customer);
+	}
+
+	public void verifyCustomerByOtp(VerifyTokenDTO dto) {
+		 String email = dto.getEmail();
+		 String otpCode = dto.getOtpCode();
+		    
+		Customer customer = customerRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		if (!otpCode.equals(customer.getOtpCode())) {
+			throw new RuntimeException("Invalid OTP code");
+		}
+
+		if (customer.getOtpExpiry().isBefore(LocalDateTime.now())) {
+			throw new RuntimeException("OTP code expired");
+		}
+
+		customer.setVerified(true);
+		customer.setOtpCode(null);
+		customer.setOtpExpiry(null);
 		customer.setVerificationToken(null);
 		customer.setTokenExpiry(null);
 

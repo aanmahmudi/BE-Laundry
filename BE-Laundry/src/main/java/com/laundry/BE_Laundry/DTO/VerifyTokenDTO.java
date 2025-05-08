@@ -11,7 +11,8 @@ public class VerifyTokenDTO {
 	@Email(message = "Invalid email format")
 	private String email;
 	
-	@NotBlank(message = "verification token is required")
 	private String token;
+	
+	private String otpCode;
 
 }

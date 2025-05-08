@@ -124,8 +124,8 @@ public class CustomerController {
 
 	}
 
-	@PostMapping("/verify")
-	public ResponseEntity<String> verifyCustomer(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO) {
+	@PostMapping("/verify-token")
+	public ResponseEntity<?> verifyCustomer(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO) {
 		try {
 			customerService.verifyCustomer(verifyTokenDTO);
 			return ResponseEntity.ok("Account verified successfuly");
@@ -135,6 +135,18 @@ public class CustomerController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
 		}
 
+	}
+
+	@PostMapping("/verify-otp")
+	public ResponseEntity<?> verifyOtp(@RequestBody @Valid VerifyTokenDTO dto) {
+		try {
+			customerService.verifyCustomerByOtp(dto);
+			return ResponseEntity.ok("Verification via OTP Successful.");
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed:" + ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
+		}
 	}
 
 	@GetMapping

@@ -13,8 +13,8 @@ services:
 
   app:
     build: .
-    restart: always  # Perbaiki penulisan (huruf kecil)
+    restart: always
     ports:
-      - "8080:8080"  # Perbaiki indentasi
+      - "8080:8080"
     depends_on:
       - db

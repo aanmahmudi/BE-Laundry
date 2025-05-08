@@ -25,6 +25,10 @@ public class Product {
 	private String name;
 	@Column(precision = 10, scale = 5)
 	private BigDecimal price;
+	
+	@Column(name = "photo_url")
+	private String photoUrl;
+	
 	private String description;
 
 }
