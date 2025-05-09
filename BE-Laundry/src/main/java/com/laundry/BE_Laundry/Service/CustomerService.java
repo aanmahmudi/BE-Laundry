@@ -6,16 +6,20 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.laundry.BE_Laundry.DTO.CustomerLoginDTO;
+import com.laundry.BE_Laundry.DTO.OTPVerificationDTO;
 import com.laundry.BE_Laundry.DTO.RegisterRequestDTO;
 import com.laundry.BE_Laundry.DTO.UpdatePasswordRequestDTO;
 import com.laundry.BE_Laundry.DTO.VerifyTokenDTO;
 import com.laundry.BE_Laundry.Entity.Customer;
 import com.laundry.BE_Laundry.Repository.CustomerRepository;
+import com.laundry.BE_Laundry.Utill.GenerateOTP;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +29,9 @@ public class CustomerService {
 
 	private final CustomerRepository customerRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailService emailService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
 	public void registerCustomer(RegisterRequestDTO registerDTO) {
 		if (customerRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
@@ -33,6 +40,12 @@ public class CustomerService {
 
 		// Map dari DTO ke entity
 		Customer customer = mapToCustomer(registerDTO);
+		
+		//Generated OTP
+		String otp = GenerateOTP.generateOTP();
+		
+		//Generated Token
+		generateAndSendVerificationToken(customer.getEmail());
 
 		// Simpan ke database
 		customerRepository.save(customer);
@@ -52,12 +65,9 @@ public class CustomerService {
 		customer.setDocumentUrl(registerDTO.getDocumentUrl());
 		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
 		customer.setVerificationToken(UUID.randomUUID().toString());
-		String otp = String.format("%06d", new Random().nextInt(999999));
-		customer.setOtpCode(otp);
 
 		// Set expiry 2menit
 		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
-		customer.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
 //		customer.setTokenExpiry(LocalDateTime.now().minusMinutes(2));
 		customer.setVerified(false);
 
@@ -95,8 +105,24 @@ public class CustomerService {
 		customer.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
 		customerRepository.save(customer);
 	}
+	
+	public void generateAndSendVerificationToken(String email) {
+		Customer customer = customerRepository.findByEmail(email)
+				.orElseThrow(()-> new RuntimeException ("User Not Found"));
+		
+		if (customer.isVerified()) {
+			throw new RuntimeException("User already verified");
+		}
+		
+		String token = UUID.randomUUID().toString();
+		customer.setVerificationToken(token);
+		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+		
+		customerRepository.save(customer);
+		emailService.sendVerificationLink(email, token);
+	}
 
-	public void verifyCustomer(VerifyTokenDTO verifyTokenDTO) {
+	public void verifyToken(VerifyTokenDTO verifyTokenDTO) {
 		Customer customer = customerRepository.findByEmail(verifyTokenDTO.getEmail())
 				.orElseThrow(() -> new RuntimeException("User Not Foundd"));
 
@@ -109,22 +135,33 @@ public class CustomerService {
 		}
 
 		customer.setVerified(true);
-		customer.setOtpCode(null);
-		customer.setOtpExpiry(null);
 		customer.setVerificationToken(null);
 		customer.setTokenExpiry(null);
-
+		
 		customerRepository.save(customer);
 	}
+	public void resendVerificationToken(String email) {
+        generateAndSendVerificationToken(email);
+    }
 
-	public void verifyCustomerByOtp(VerifyTokenDTO dto) {
-		 String email = dto.getEmail();
-		 String otpCode = dto.getOtpCode();
+	public void generateAndSendOTP(OTPVerificationDTO otpVerify) {
 		    
-		Customer customer = customerRepository.findByEmail(email)
+		Customer customer = customerRepository.findByEmail(otpVerify.getEmail())
 				.orElseThrow(() -> new RuntimeException("User not found"));
-
-		if (!otpCode.equals(customer.getOtpCode())) {
+		
+		String otp = GenerateOTP.generateOTP();
+		customer.setOtpCode(otp);
+		customer.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+		customerRepository.save(customer);
+		
+		logger.info("OTP for {} is: {}", otpVerify);
+		emailService.sendOTPEmail(otpVerify.getEmail(), otp);
+	}
+	
+	public boolean verifyOTP(OTPVerificationDTO otpVerify) {
+		Customer customer = customerRepository.findByEmail(otpVerify.getEmail())
+				.orElseThrow(()-> new RuntimeException("User Not Found"));
+		if (customer.getOtpCode()== null || !customer.getOtpCode().equals(otpVerify.getOtp())){
 			throw new RuntimeException("Invalid OTP code");
 		}
 
@@ -135,10 +172,13 @@ public class CustomerService {
 		customer.setVerified(true);
 		customer.setOtpCode(null);
 		customer.setOtpExpiry(null);
-		customer.setVerificationToken(null);
-		customer.setTokenExpiry(null);
 
 		customerRepository.save(customer);
+		return true;
+	}
+	
+	public void resendOtp(OTPVerificationDTO otpVerify) {
+		generateAndSendOTP(otpVerify);
 	}
 
 	public void logout(String email) {
@@ -165,6 +205,8 @@ public class CustomerService {
 		existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
 		existingCustomer.setPlaceOfBirth(updatedCustomer.getPlaceOfBirth());
 		existingCustomer.setDateOfBirth(updatedCustomer.getDateOfBirth());
+		existingCustomer.setDocumentUrl(updatedCustomer.getDocumentUrl());
+		existingCustomer.setPhotoUrl(updatedCustomer.getPhotoUrl());
 		return customerRepository.save(existingCustomer);
 
 	}

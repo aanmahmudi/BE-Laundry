@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laundry.BE_Laundry.DTO.ApiResponse;
 import com.laundry.BE_Laundry.DTO.CustomerLoginDTO;
+import com.laundry.BE_Laundry.DTO.OTPVerificationDTO;
 import com.laundry.BE_Laundry.DTO.RegisterRequestDTO;
 import com.laundry.BE_Laundry.DTO.UpdatePasswordRequestDTO;
 import com.laundry.BE_Laundry.DTO.VerifyTokenDTO;
@@ -124,10 +125,10 @@ public class CustomerController {
 
 	}
 
-	@PostMapping("/verify-token")
-	public ResponseEntity<?> verifyCustomer(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO) {
+	@PostMapping("/verifyToken")
+	public ResponseEntity<?> verifyToken(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO) {
 		try {
-			customerService.verifyCustomer(verifyTokenDTO);
+			customerService.verifyToken(verifyTokenDTO);
 			return ResponseEntity.ok("Account verified successfuly");
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed:" + ex.getMessage());
@@ -137,10 +138,11 @@ public class CustomerController {
 
 	}
 
-	@PostMapping("/verify-otp")
-	public ResponseEntity<?> verifyOtp(@RequestBody @Valid VerifyTokenDTO dto) {
+	@PostMapping("/verifyOtp")
+	public ResponseEntity<?> verifyOTP(@RequestBody @Valid OTPVerificationDTO otpVerify) {
 		try {
-			customerService.verifyCustomerByOtp(dto);
+			customerService.verifyOTP(otpVerify);
+			logger.info("OTP verified for {}", otpVerify.getEmail());
 			return ResponseEntity.ok("Verification via OTP Successful.");
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed:" + ex.getMessage());

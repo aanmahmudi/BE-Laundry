@@ -108,31 +108,34 @@ public class TransactionService {
 	}
 
 	// Melakukan payment berdasarkan ID pada transaksi
-	public TransactionResponseDTO makePayment(Long transactionId, BigDecimal paymentAmount) {
-		Transaction transaction = transactionRepository.findById(transactionId)
-				.orElseThrow(() -> new RuntimeException("Transction not found"));
-
-		if (transaction.getPaymentStatus().equals("PAID")) {
-			throw new RuntimeException("Transaction already paid");
-		}
-
-		// Memastikan Pembayaran cukup
-		if (paymentAmount.compareTo(transaction.getTotalPrice()) > 0) {
-			throw new RuntimeException("Insufficient payment amount");
-		}
-
-		transaction.setPaymentAmount(paymentAmount);
-		transaction.setPaymentStatus("PAID");
-		transactionRepository.save(transaction);
-		return mapToResponseDTO(transaction);
-	}
+//	public TransactionResponseDTO makePayment(Long transactionId, BigDecimal paymentAmount) {
+//		Transaction transaction = transactionRepository.findById(transactionId)
+//				.orElseThrow(() -> new RuntimeException("Transction not found"));
+//
+//		if (transaction.getPaymentStatus().equals("PAID")) {
+//			throw new RuntimeException("Transaction already paid");
+//		}
+//
+//		// Memastikan Pembayaran cukup
+//		if (paymentAmount.compareTo(transaction.getTotalPrice()) > 0) {
+//			throw new RuntimeException("Insufficient payment amount");
+//		}
+//
+//		transaction.setPaymentAmount(paymentAmount);
+//		transaction.setPaymentStatus("PAID");
+//		transactionRepository.save(transaction);
+//		return mapToResponseDTO(transaction);
+//	}
 
 	// Mapping transaction ke DTO
 	private TransactionResponseDTO mapToResponseDTO(Transaction transaction) {
 		return TransactionResponseDTO.builder().id(transaction.getId())
-				.customerName(transaction.getCustomer().getUsername()).productName(transaction.getProduct().getName())
-				.quantity(transaction.getQuantity()).totalPrice(transaction.getTotalPrice())
-				.transactionDate(transaction.getTransactionDate()).paymentStatus(transaction.getPaymentStatus())
+				.customerName(transaction.getCustomer().getUsername())
+				.productName(transaction.getProduct().getName())
+				.quantity(transaction.getQuantity())
+				.totalPrice(transaction.getTotalPrice())
+				.transactionDate(transaction.getTransactionDate())
+				.paymentStatus(transaction.getPaymentStatus())
 				.paymentAmount(transaction.getPaymentAmount()).build();
 
 	}
