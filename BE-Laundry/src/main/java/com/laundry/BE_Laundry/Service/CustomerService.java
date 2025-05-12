@@ -43,12 +43,21 @@ public class CustomerService {
 		
 		//Generated OTP
 		String otp = GenerateOTP.generateOTP();
+		customer.setOtpCode(otp);
+		customer.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
 		
 		//Generated Token
-		generateAndSendVerificationToken(customer.getEmail());
-
+		String token = UUID.randomUUID().toString();
+		customer.setVerificationToken(token);
+		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+		
 		// Simpan ke database
 		customerRepository.save(customer);
+		
+		//Send Otp & Token
+		emailService.sendOTPEmail(customer.getEmail(), otp);
+		emailService.sendVerificationLink(customer.getEmail(), token);
+
 	}
 
 	private Customer mapToCustomer(RegisterRequestDTO registerDTO) {
@@ -67,9 +76,9 @@ public class CustomerService {
 		customer.setVerificationToken(UUID.randomUUID().toString());
 
 		// Set expiry 2menit
-		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
+//		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
 //		customer.setTokenExpiry(LocalDateTime.now().minusMinutes(2));
-		customer.setVerified(false);
+//		customer.setVerified(false);
 
 		return customer;
 
@@ -113,13 +122,7 @@ public class CustomerService {
 		if (customer.isVerified()) {
 			throw new RuntimeException("User already verified");
 		}
-		
-		String token = UUID.randomUUID().toString();
-		customer.setVerificationToken(token);
-		customer.setTokenExpiry(LocalDateTime.now().plusHours(24));
-		
-		customerRepository.save(customer);
-		emailService.sendVerificationLink(email, token);
+	
 	}
 
 	public void verifyToken(VerifyTokenDTO verifyTokenDTO) {
@@ -149,13 +152,7 @@ public class CustomerService {
 		Customer customer = customerRepository.findByEmail(otpVerify.getEmail())
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
-		String otp = GenerateOTP.generateOTP();
-		customer.setOtpCode(otp);
-		customer.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
-		customerRepository.save(customer);
-		
 		logger.info("OTP for {} is: {}", otpVerify);
-		emailService.sendOTPEmail(otpVerify.getEmail(), otp);
 	}
 	
 	public boolean verifyOTP(OTPVerificationDTO otpVerify) {
