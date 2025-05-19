@@ -138,19 +138,6 @@ public class CustomerController {
 
 	}
 
-	@PostMapping("/verifyOtp")
-	public ResponseEntity<?> verifyOTP(@RequestBody @Valid OTPVerificationDTO otpVerify) {
-		try {
-			customerService.verifyOTP(otpVerify);
-			logger.info("OTP verified for {}", otpVerify.getEmail());
-			return ResponseEntity.ok("Verification via OTP Successful.");
-		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed:" + ex.getMessage());
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
-		}
-	}
-
 	@GetMapping
 	public ResponseEntity<?> getAllCustomers() {
 		List<Customer> customer = customerService.getAllCustomers();
