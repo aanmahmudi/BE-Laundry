@@ -13,6 +13,5 @@ public class VerifyTokenDTO {
 	
 	private String token;
 	
-	private String otpCode;
 
 }
