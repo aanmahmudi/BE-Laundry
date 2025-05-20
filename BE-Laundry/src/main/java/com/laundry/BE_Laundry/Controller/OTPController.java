@@ -52,5 +52,21 @@ public class OTPController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
 		}
 	}
-
+	
+	@PostMapping("/resend")
+	public ResponseEntity<?> resend(@RequestBody @Valid OTPVerificationDTO resend){
+		String email = resend.getEmail();
+		try {
+			otpService.generate(email);
+			logger.info("OTP resend Successfuly to {}", email);
+			return ResponseEntity.ok("OTP Resend");
+		}catch (IllegalArgumentException ex) {
+			logger.warn("Failed to resend OTP to {} - {}", email, ex.getMessage());
+			return ResponseEntity.badRequest().body("Failed to resend OTP: " + ex.getMessage());
+		}catch (Exception ex) {
+			logger.error("Unexcepted error while resend OTP to {}: {}", email, ex.getMessage(), ex);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured while resend OTP");
+		}		
+	}
+	
 }

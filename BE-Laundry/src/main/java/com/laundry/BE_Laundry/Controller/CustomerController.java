@@ -125,19 +125,6 @@ public class CustomerController {
 
 	}
 
-	@PostMapping("/verifyToken")
-	public ResponseEntity<?> verifyToken(@RequestBody @Valid VerifyTokenDTO verifyTokenDTO) {
-		try {
-			customerService.verifyToken(verifyTokenDTO);
-			return ResponseEntity.ok("Account verified successfuly");
-		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed:" + ex.getMessage());
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
-		}
-
-	}
-
 	@GetMapping
 	public ResponseEntity<?> getAllCustomers() {
 		List<Customer> customer = customerService.getAllCustomers();
