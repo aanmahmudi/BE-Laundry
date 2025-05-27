@@ -2,6 +2,8 @@ package com.laundry.BE_Laundry.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -44,13 +46,13 @@ public class CustomerService {
 		//Logika OTP
 		String otp = GenerateOTP.generateOTP();
 		customer.setOtpCode(otp);
-		customer.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+		customer.setOtpExpiry((OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5)));
 		customer.setVerified(false);
 		
 		//Logika Link Token
 		String token = UUID.randomUUID().toString();
 		customer.setVerificationToken(token);
-		customer.setTokenExpiry(LocalDateTime.now().plusMinutes(5));
+		customer.setTokenExpiry((OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5)));
 		customer.setVerified(false);
 				
 		// Simpan ke database

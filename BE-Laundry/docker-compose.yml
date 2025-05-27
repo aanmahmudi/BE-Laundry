@@ -10,6 +10,8 @@ services:
       POSTGRES_USER: subrutin
       POSTGRES_PASSWORD: subrutin
       POSTGRES_DB: db-laundry
+      TZ: Asia/Jakarta
+      PGTZ: Asia/Jakarta
 
   app:
     build: .
@@ -18,3 +20,5 @@ services:
       - "8080:8080"
     depends_on:
       - db
+    environment:
+      TZ: Asia/Jakarta

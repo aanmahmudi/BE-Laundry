@@ -1,6 +1,8 @@
 package com.laundry.BE_Laundry.Service;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ public class OTPService {
 		String otp = GenerateOTP.generateOTP();
 		
 		c.setOtpCode(otp);
-		c.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+		c.setOtpExpiry(OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5));
 		customerRepository.save(c);
 		emailService.sendOTPEmail(email, otp);
 	}
@@ -30,9 +32,9 @@ public class OTPService {
 		Customer c = loadActiveUser(email);
 		
 		if (!otp.equals(c.getOtpCode()))
-			throw new RuntimeException("Otp Salah");
-		if (c.getOtpExpiry().isBefore(LocalDateTime.now()))
-			throw new RuntimeException("Otp Kadaluarsa");
+			throw new IllegalArgumentException("Otp Salah");
+		if (c.getOtpExpiry().isBefore(OffsetDateTime.now(ZoneId.of("Asia/Jakarta"))))
+			throw new IllegalArgumentException("Otp Kadaluarsa");
 		
 		c.setVerified(true);
 		c.setOtpCode(null);

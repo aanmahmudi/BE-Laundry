@@ -1,6 +1,8 @@
 package com.laundry.BE_Laundry.Service;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class TokenService {
 		
 		String token = UUID.randomUUID().toString();
 		c.setVerificationToken(token);
-		c.setTokenExpiry(LocalDateTime.now().plusHours(24));
+		c.setTokenExpiry(OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5));
 		customerRepository.save(c);
 		
 		emailService.sendVerificationLink(email, token);
@@ -33,12 +35,12 @@ public class TokenService {
 	
 	public void verify (String email, String token) {
 		Customer c = customerRepository.findByEmail(email)
-				.orElseThrow(()-> new RuntimeException ("User Not Found"));
+				.orElseThrow(()-> new IllegalArgumentException ("User Not Found"));
 		
 		if (!token.equals(c.getVerificationToken()))
-			throw new RuntimeException("Token salah");
-		if(c.getTokenExpiry().isBefore(LocalDateTime.now()))
-			throw new RuntimeException("Token kadaluarsa");
+			throw new IllegalArgumentException("Token salah");
+		if(c.getTokenExpiry().isBefore(OffsetDateTime.now(ZoneId.of("Asia/Jakarta"))))
+			throw new IllegalArgumentException("Token kadaluarsa");
 		
 		c.setVerified(true);
 		c.setVerificationToken(null);

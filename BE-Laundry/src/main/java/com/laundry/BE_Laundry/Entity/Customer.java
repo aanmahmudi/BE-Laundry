@@ -2,6 +2,8 @@ package com.laundry.BE_Laundry.Entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -31,9 +33,10 @@ public class Customer {
 
 	private Long id;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Jakarta")
 	@Column(name = "created_at", updatable = false)
 	@CreationTimestamp
-	private LocalDateTime createdAt;
+	private OffsetDateTime createdAt;
 	
 	@Column(nullable = false)
 	private String username;
@@ -63,16 +66,17 @@ public class Customer {
 	@Column(name = "document_pdf")
 	private String documentUrl;
 	
-	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Jakarta")
 	private String verificationToken;
 	private boolean isVerified = false;
-	private LocalDateTime tokenExpiry;
+	private OffsetDateTime tokenExpiry;
 	
 	@Column(name = "otp_code")
 	private String otpCode;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Jakarta")
 	@Column(name = "otp_expiry")
-	private LocalDateTime otpExpiry;
+	private OffsetDateTime otpExpiry;
 	
 	@Enumerated(EnumType.STRING)
 	public RoleType role;
@@ -84,7 +88,7 @@ public class Customer {
 	
 	public void generateVerificationToken() {
 		this.verificationToken = UUID.randomUUID().toString();
-		this.tokenExpiry = LocalDateTime.now().plusHours(24);
+		this.tokenExpiry = OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5);
 	}
 
 }
