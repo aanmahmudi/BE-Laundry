@@ -26,10 +26,10 @@ public class OTPService {
 		emailService.sendOTPEmail(email, otp);
 	}
 	
-	public void verify (String email, String code) {
+	public void verify (String email, String otp) {
 		Customer c = loadActiveUser(email);
 		
-		if (!code.equals(c.getOtpCode()))
+		if (!otp.equals(c.getOtpCode()))
 			throw new RuntimeException("Otp Salah");
 		if (c.getOtpExpiry().isBefore(LocalDateTime.now()))
 			throw new RuntimeException("Otp Kadaluarsa");

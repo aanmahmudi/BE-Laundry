@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class VerifyService {
+public class TokenService {
 	private final CustomerRepository customerRepository;
 	private final EmailService emailService;
 	

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.laundry.BE_Laundry.DTO.VerifyTokenDTO;
-import com.laundry.BE_Laundry.Service.VerifyService;
+import com.laundry.BE_Laundry.Service.TokenService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,10 +19,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VerifyController {
 	
-	private final VerifyService verifyService;
+	private final TokenService verifyService;
 	private static final Logger logger = LoggerFactory.getLogger(VerifyController.class);
 	
-	@PostMapping("/verify")
+	@PostMapping("/send")
 	public ResponseEntity<?> verify(@RequestBody VerifyTokenDTO verifyDTO){
 		try {
 			verifyService.verify(verifyDTO.getEmail(), verifyDTO.getToken());
@@ -38,7 +38,7 @@ public class VerifyController {
 		
 	}
 	
-	@PostMapping("/verify")
+	@PostMapping("/resend")
 	public ResponseEntity<?> resend(@RequestBody VerifyTokenDTO verifyDTO){
 		try {
 			verifyService.resend(verifyDTO.getEmail());

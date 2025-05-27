@@ -29,6 +29,7 @@ public class CustomerService {
 
 	private final CustomerRepository customerRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailService emailService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
@@ -39,9 +40,27 @@ public class CustomerService {
 
 		// Map dari DTO ke entity
 		Customer customer = mapToCustomer(registerDTO);
+		
+		//Logika OTP
+		String otp = GenerateOTP.generateOTP();
+		customer.setOtpCode(otp);
+		customer.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+		customer.setVerified(false);
+		
+		//Logika Link Token
+		String token = UUID.randomUUID().toString();
+		customer.setVerificationToken(token);
+		customer.setTokenExpiry(LocalDateTime.now().plusMinutes(5));
+		customer.setVerified(false);
 				
 		// Simpan ke database
 		customerRepository.save(customer);
+		
+		// Kirim Token ke email
+		emailService.sendVerificationLink(customer.getEmail(), token);
+		
+		// Kirim OTP ke email
+		emailService.sendOTPEmail(customer.getEmail(), otp);
 		
 	}
 

@@ -42,6 +42,8 @@ public class SecurityConfig{
 						"/api/customers/upload/pdf",
 						"/api/otp/send",
 						"/api/otp/verify",
+						"/api/verify/send",
+						"/api/verify/resend",
 						"/api/products",
 						"/api/products/{id}",
 						"/api/transactions",
