@@ -42,9 +42,13 @@ public class TokenService {
 		if(c.getTokenExpiry().isBefore(OffsetDateTime.now(ZoneId.of("Asia/Jakarta"))))
 			throw new IllegalArgumentException("Token kadaluarsa");
 		
+		//tanda verifikasi
 		c.setVerified(true);
+		
 		c.setVerificationToken(null);
 		c.setTokenExpiry(null);
+		c.setOtpExpiry(null);
+		c.setVerificationOtp(null);
 		customerRepository.save(c);
 	}
 	

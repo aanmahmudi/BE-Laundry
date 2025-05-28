@@ -45,7 +45,7 @@ public class CustomerService {
 		
 		//Logika OTP
 		String otp = GenerateOTP.generateOTP();
-		customer.setOtpCode(otp);
+		customer.setVerificationOtp(otp);
 		customer.setOtpExpiry((OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5)));
 		customer.setVerified(false);
 		
@@ -76,7 +76,7 @@ public class CustomerService {
 		customer.setDateOfBirth(registerDTO.getDateOfBirth());
 		customer.setPhoneNumber(registerDTO.getPhoneNumber());
 		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
-
+		customer.setVerified(false);
 		return customer;
 
 	}

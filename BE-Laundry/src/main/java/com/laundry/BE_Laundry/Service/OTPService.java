@@ -19,39 +19,42 @@ public class OTPService {
 	private final EmailService emailService;
 	
 	public void generate (String email) {
-		Customer c = loadActiveUser(email);
-		String otp = GenerateOTP.generateOTP();
+		Customer c = customerRepository.findByEmail(email)
+				.orElseThrow(()-> new RuntimeException("User not found"));
+		if(c.isVerified())
+			throw new RuntimeException("User already verified");
 		
-		c.setOtpCode(otp);
+		String otp = GenerateOTP.generateOTP();
+		c.setVerificationOtp(otp);
 		c.setOtpExpiry(OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5));
 		customerRepository.save(c);
 		emailService.sendOTPEmail(email, otp);
 	}
 	
 	public void verify (String email, String otp) {
-		Customer c = loadActiveUser(email);
+		Customer c = customerRepository.findByEmail(email)
+				.orElseThrow(()-> new RuntimeException("User not found"));
 		
-		if (!otp.equals(c.getOtpCode()))
+		if (!otp.equals(c.getVerificationOtp())) {
 			throw new IllegalArgumentException("Otp Salah");
-		if (c.getOtpExpiry().isBefore(OffsetDateTime.now(ZoneId.of("Asia/Jakarta"))))
+		}
+		if (c.getOtpExpiry().isBefore(OffsetDateTime.now(ZoneId.of("Asia/Jakarta")))) {
 			throw new IllegalArgumentException("Otp Kadaluarsa");
+		}
 		
+		
+		//tanda verifikasi
 		c.setVerified(true);
-		c.setOtpCode(null);
+		
+		c.setVerificationOtp(null);
 		c.setOtpExpiry(null);
+		c.setVerificationToken(null);
+		c.setTokenExpiry(null);
 		customerRepository.save(c);
 	}
 	
 	public void resend(String email) {
 		generate(email);
-	}
-	
-	private Customer loadActiveUser(String email) {
-		Customer c = customerRepository.findByEmail(email)
-				.orElseThrow(()-> new RuntimeException("User Not Found"));
-		if (c.isVerified())
-			throw new RuntimeException("User already verified");
-		return c;
 	}
 	
 

@@ -66,16 +66,15 @@ public class Customer {
 	@Column(name = "document_pdf")
 	private String documentUrl;
 	
+	@Column(name = "is_verified")
+	private boolean verified = false;
+	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Jakarta")
 	private String verificationToken;
-	private boolean isVerified = false;
 	private OffsetDateTime tokenExpiry;
 	
-	@Column(name = "otp_code")
-	private String otpCode;
-	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Jakarta")
-	@Column(name = "otp_expiry")
+	private String verificationOtp;
 	private OffsetDateTime otpExpiry;
 	
 	@Enumerated(EnumType.STRING)
@@ -90,5 +89,6 @@ public class Customer {
 		this.verificationToken = UUID.randomUUID().toString();
 		this.tokenExpiry = OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5);
 	}
+	
 
 }
