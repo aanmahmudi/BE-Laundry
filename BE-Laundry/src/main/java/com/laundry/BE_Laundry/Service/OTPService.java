@@ -22,9 +22,25 @@ public class OTPService {
 		Customer c = customerRepository.findByEmail(email)
 				.orElseThrow(()-> new RuntimeException("User not found"));
 		
+		
+		//Cegah generate OTP Jika sudah verifikasi
+		if (c.isVerified()) {
+			throw new IllegalStateException("Akun sudah terverifikasi, OTP tidak diperlukan");
+		}
+		
+		//Cegah spam OTP, jika OTP masih aktif, jangan buat baru.
+		if (c.getVerificationOtp() != null &&
+				c.getOtpExpiry() != null &&
+				c.getOtpExpiry().isAfter(OffsetDateTime.now(ZoneId.of("Asia/Jakarta")))) {
+				throw new IllegalStateException("OTP masih aktif, silahkan cek kembali");
+		}
+		
+		//Generate OTP baru
 		String otp = GenerateOTP.generateOTP();
+		OffsetDateTime expiry = (OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5));
+		
 		c.setVerificationOtp(otp);
-		c.setOtpExpiry(OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5));
+		c.setOtpExpiry(expiry);
 		customerRepository.save(c);
 		
 		emailService.sendOTPEmail(email, otp);

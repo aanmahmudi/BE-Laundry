@@ -9,23 +9,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.laundry.BE_Laundry.DTO.OTPSendDTO;
+import com.laundry.BE_Laundry.DTO.TokenSendDTO;
 import com.laundry.BE_Laundry.DTO.VerifyTokenDTO;
 import com.laundry.BE_Laundry.Service.TokenService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/verify")
+@RequestMapping("/api/token")
 @RequiredArgsConstructor
-public class VerifyController {
+public class TokenController {
 	
-	private final TokenService verifyService;
-	private static final Logger logger = LoggerFactory.getLogger(VerifyController.class);
+	private final TokenService tokenService;
+	private static final Logger logger = LoggerFactory.getLogger(TokenController.class);
 	
 	@PostMapping("/send")
+	public ResponseEntity<String> send(@RequestBody @Valid TokenSendDTO tokenSend) {
+		String email = tokenSend.getEmail();
+		try {
+			tokenService.generate(email);
+			logger.info("Token sent Successfully to {}", email);
+			return ResponseEntity.ok("Token Sent");
+		} catch (IllegalArgumentException ex) {
+			logger.warn("Failed to send Token to {} - {}", email, ex.getMessage());
+			return ResponseEntity.badRequest().body("Failed to send Token: " + ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Unexpected error while sending Token to {}: {}", email, ex.getMessage(), ex);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured while sending Token");
+		}
+	}
+	
+	@PostMapping("/verify")
 	public ResponseEntity<?> verify(@RequestBody VerifyTokenDTO verifyDTO){
 		try {
-			verifyService.verify(verifyDTO.getEmail(), verifyDTO.getToken());
+			tokenService.verify(verifyDTO.getEmail(), verifyDTO.getToken());
 			logger.info("Token verified for {}", verifyDTO.getEmail());
 			return ResponseEntity.ok("Account verified");
 		}catch (IllegalArgumentException ex) {
@@ -41,7 +60,7 @@ public class VerifyController {
 	@PostMapping("/resend")
 	public ResponseEntity<?> resend(@RequestBody VerifyTokenDTO verifyDTO){
 		try {
-			verifyService.resend(verifyDTO.getEmail());
+			tokenService.resend(verifyDTO.getEmail());
 			logger.info("Verification token resent to {}", verifyDTO.getEmail());
 			return ResponseEntity.ok("Token Resent");
 		}catch (IllegalArgumentException ex) {

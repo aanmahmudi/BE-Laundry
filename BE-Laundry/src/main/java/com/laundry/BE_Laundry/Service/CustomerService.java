@@ -134,8 +134,6 @@ public class CustomerService {
 		existingCustomer.setUsername(updatedCustomer.getUsername());
 		existingCustomer.setAddress(updatedCustomer.getAddress());
 		existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
-		existingCustomer.setPlaceOfBirth(updatedCustomer.getPlaceOfBirth());
-		existingCustomer.setDateOfBirth(updatedCustomer.getDateOfBirth());
 		existingCustomer.setDocumentUrl(updatedCustomer.getDocumentUrl());
 		existingCustomer.setPhotoUrl(updatedCustomer.getPhotoUrl());
 		return customerRepository.save(existingCustomer);

@@ -21,12 +21,16 @@ public class TokenService {
 	public void generate (String email) {
 		Customer c = customerRepository.findByEmail(email)
 				.orElseThrow(()-> new RuntimeException ("User not found"));
-		if(c.isVerified())
-			throw new RuntimeException("User already verified");
 		
+		//Cegah generate Token Jika sudah verifikasi
+		if(c.isVerified())
+			throw new RuntimeException("Akun sudah terverifikasi, Token tidak diperlukan");
+		
+		//Generate Token
 		String token = UUID.randomUUID().toString();
-		c.setVerificationToken(token);
 		c.setTokenExpiry(OffsetDateTime.now(ZoneId.of("Asia/Jakarta")).plusMinutes(5));
+		
+		c.setVerificationToken(token);
 		customerRepository.save(c);
 		
 		emailService.sendVerificationLink(email, token);
@@ -53,6 +57,11 @@ public class TokenService {
 	}
 	
 	public void resend(String email) {
+		Customer c = customerRepository.findByEmail(email)
+				.orElseThrow(()-> new RuntimeException("User not found"));
+		if (c.isVerified()) {
+			throw new RuntimeException("User already verified, no need to resend");
+		}
 		generate(email);
 	}
 
