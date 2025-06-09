@@ -33,7 +33,7 @@ import com.laundry.BE_Laundry.DTO.OTPVerificationDTO;
 import com.laundry.BE_Laundry.DTO.RegisterRequestDTO;
 import com.laundry.BE_Laundry.DTO.UpdatePasswordRequestDTO;
 import com.laundry.BE_Laundry.DTO.VerifyTokenDTO;
-import com.laundry.BE_Laundry.Entity.Customer;
+import com.laundry.BE_Laundry.Model.Customer;
 import com.laundry.BE_Laundry.Service.CustomerService;
 import com.laundry.BE_Laundry.Service.PhotoStorageService;
 

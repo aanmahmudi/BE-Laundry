@@ -71,10 +71,10 @@ spring:
   jackson:
     time-zone: Asia/Jakarta
   datasource:
-    url: jdbc:postgresql://localhost:5432/db-laundry
+    url: jdbc:postgresql://localhost:1123/db
     driver-class-name: org.postgresql.Driver
-    username: subrutin
-    password: subrutin
+    username: 1234567s
+    password: ssdawaaa
     hikari:
       connection-timeout: 300000
       idle-timeout: 300000

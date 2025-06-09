@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.laundry.BE_Laundry.Entity.Product;
+import com.laundry.BE_Laundry.Model.Product;
 import com.laundry.BE_Laundry.Service.ProductService;
 
 import lombok.RequiredArgsConstructor;

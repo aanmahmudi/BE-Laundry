@@ -10,8 +10,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.laundry.BE_Laundry.Entity.Customer;
-import com.laundry.BE_Laundry.Entity.CustomerDocument;
+import com.laundry.BE_Laundry.Model.Customer;
+import com.laundry.BE_Laundry.Model.CustomerDocument;
 import com.laundry.BE_Laundry.Repository.CustomerDocumentRepository;
 import com.laundry.BE_Laundry.Repository.CustomerRepository;
 

@@ -1,7 +1,9 @@
-package com.laundry.BE_Laundry.Entity;
+package com.laundry.BE_Laundry.Model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,26 +15,32 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
-@AllArgsConstructor
+@Entity
 @NoArgsConstructor
-@Table(name = "customer_documents")
-public class CustomerDocument {
-	
+@AllArgsConstructor
+@Table(name = "transactions")
+public class Transaction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "customer_id", nullable = false)
 	private Customer customer;
-	
-	private String fileName;
-	private String fileType;
-	
-	private String fileUrl;
-	private LocalDateTime uploadedAt = LocalDateTime.now();
 
+	@ManyToOne
+	@JoinColumn(name = "product_id", nullable = false)
+	private Product product;
+
+	private int quantity;
+
+	private BigDecimal totalPrice;
+	
+	@Column(name = "transaction_date")
+	private LocalDateTime transactionDate;
+
+	private String paymentStatus;
+	
+	private BigDecimal paymentAmount;
 }

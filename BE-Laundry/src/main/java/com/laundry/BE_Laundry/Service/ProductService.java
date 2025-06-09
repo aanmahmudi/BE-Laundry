@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.laundry.BE_Laundry.Entity.Product;
+import com.laundry.BE_Laundry.Model.Product;
 import com.laundry.BE_Laundry.Repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;

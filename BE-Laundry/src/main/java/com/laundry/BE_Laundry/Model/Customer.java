@@ -1,4 +1,4 @@
-package com.laundry.BE_Laundry.Entity;
+package com.laundry.BE_Laundry.Model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

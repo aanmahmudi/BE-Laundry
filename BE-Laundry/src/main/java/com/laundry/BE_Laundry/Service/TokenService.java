@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.laundry.BE_Laundry.Entity.Customer;
+import com.laundry.BE_Laundry.Model.Customer;
 import com.laundry.BE_Laundry.Repository.CustomerRepository;
 
 import lombok.RequiredArgsConstructor;
