@@ -11,4 +11,4 @@ COPY target/BE-Laundry-0.0.1-SNAPSHOT.jar /app/app.jar
 EXPOSE 8080
 
 # Run the application with the 'docker' Spring profile
-CMD ["java", "-Dspring.profiles.active=docker", "-Duser.timezone=Asia/Jakarta", "-jar", "app.jar"]
+CMD ["java", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Jakarta", "-jar", "app.jar"]
