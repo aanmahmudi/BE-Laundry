@@ -30,6 +30,8 @@ public class SecurityConfig{
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(
+						"/",
+						"/register",
 						"/api/customers/register",
 						"/api/customers/verify-token",
 						"/api/customers/verify-otp",
@@ -39,7 +41,9 @@ public class SecurityConfig{
 						"/api/customers",
 						"/api/customers/{id}",
 						"/api/customers/upload/photo",
+						"/api/customers/upload-photo",
 						"/api/customers/upload/pdf",
+						"/api/customers/upload-pdf",
 						"/api/otp/send",
 						"/api/otp/verify",
 						"/api/token/send",

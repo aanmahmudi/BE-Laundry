@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.laundry.BE_Laundry.Model.Customer.RoleType;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,7 @@ public class RegisterRequestDTO {
 	private String username;
 	private String placeOfBirth;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate dateOfBirth;
 	private String address;
 	private String phoneNumber;
@@ -38,6 +39,6 @@ public class RegisterRequestDTO {
 	private String password;
 	private String photoUrl;
 	private String documentUrl;
-	private String role;
+	private RoleType role;
 
 }

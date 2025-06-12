@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Dokumen</title>
+</head>
+<body>
+<h2>Upload Foto dan Dokumen</h2>
+
+<!-- Upload Photo -->
+<form  id = "photoForm" enctype="multipart/form-data">
+	<input type = "hidden" name="customerId" th:value="${customerId}"/>
+	
+	<label>Upload Foto :</label><br>
+	<input type = "file" name="file" accept="image/*" required /><br><br>
+	
+	<button type="submit">Upload Foto</button>
+</form>
+<p id ="photoResult"></p>
+
+<hr>
+
+<!-- Upload PDF -->
+<form id = "pdfForm" enctype="multipart/form-data">
+	<input type = "hidden" name="customerId" th:value="${customerId}"/>
+	
+	<label>Upload PDF :</label><br>
+	<input type = "file" name="file" accept="application/pdf" required /><br><br>
+	
+	<button type="submit">Upload PDF</button>
+</form>
+<p id="pdfResult"></p>
+
+<script>
+    // Upload Foto
+    document.getElementById("photoForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        fetch('/api/customers/upload/photo', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            const msg = data.fileurl
+                ? "Foto berhasil diupload!"
+                : "Gagal upload foto: " + (data.error || "Unknown error");
+            document.getElementById("photoMessage").innerText = msg;
+        })
+        .catch(err => {
+            document.getElementById("photoResult").innerText = "Error: " + err.message;
+        });
+    });
+
+    // Upload PDF
+    document.getElementById("pdfForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        fetch('/api/customers/upload/pdf', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+        	const msg = data.fileurl
+            	? "PDF berhasil diupload!"
+            	: "Gagal upload PDF: " + (data.error || "Unknown error");
+        	document.getElementById("pdfMessage").innerText = msg;
+    	})
+        .catch(err => {
+            document.getElementById("pdfMessage").innerText = "Error: " + err.message;
+        });
+    });
+</script>
+</body>
+</html>

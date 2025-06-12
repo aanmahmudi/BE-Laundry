@@ -10,7 +10,9 @@
 *.class
 
 # Build tool
-target/
+# Ignore everything in target except the JAR
+target/*
+!target/*.jar
 build/
 
 # OS/Editor files

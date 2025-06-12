@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +35,7 @@ public class DocumentUploadController {
 
 		try {
 			String fileUrl = documentService.uploadPDF(file, customerId);
+			
 			log.info("PDF uploaded for CustomerId {}", customerId);
 			return ResponseEntity.ok(
 					ApiMesDocUpload.success("Upload successfull", Map.of("fileUrl", fileUrl)));
@@ -43,6 +46,13 @@ public class DocumentUploadController {
 			log.error("IO Error uploading PDF for CustomerId {}: {} ", customerId, e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiMesDocUpload.error("Terjadi kesalahan saat upload file"));
 		}
+
+	}
+	
+	@GetMapping("/upload-pdf")
+	public String showUploadForm(@RequestParam ("id")Long customerId, Model model) {
+		model.addAttribute("customerId", customerId);
+		return "upload-documents";
 
 	}
 

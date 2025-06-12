@@ -10,16 +10,21 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.laundry.BE_Laundry.DTO.ApiMesDocUpload;
 import com.laundry.BE_Laundry.Service.PhotoStorageService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
@@ -28,7 +33,7 @@ public class PhotoUploadController {
 	private final PhotoStorageService photoStorageService;
 
 	@PostMapping(value = "/upload/photo", consumes = "multipart/form-data")
-	public ResponseEntity<Map<String, String>> uploadFile(
+	public ResponseEntity<ApiMesDocUpload<Map<String, String>>> uploadFile(
 			@RequestParam("file") MultipartFile file,
 			@RequestParam("customerId") Long customerId) {
 		System.out.println(">>> File diterima: " + file.getOriginalFilename());
@@ -38,16 +43,22 @@ public class PhotoUploadController {
 
 			String fileUrl = photoStorageService.uploadPhoto(file, customerId);
 
-			response.put("message", "Upload successful!");
-			response.put("fileUrl", fileUrl);
-			return ResponseEntity.ok(response);
+			log.info("Photo uploaded for CustomerId {}", customerId);
+			return ResponseEntity.ok(
+					ApiMesDocUpload.success("Upload successfull", Map.of("fileUrl", fileUrl)));
 		} catch (RuntimeException e) {
-			response.put("error", e.getMessage());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+			log.error("Upload failed for CustomerId {}: {}", customerId, e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiMesDocUpload.fail("Upload gagal: " + e.getMessage(), "UPLOAD_RUNTIME_ERROR"));
 		} catch (IOException e) {
-			response.put("error", "Could not upload file: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+			log.error("IO Error uploading Photo for CustomerId {}: {} ", customerId, e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiMesDocUpload.error("Terjadi kesalahan saat upload file"));
 		}
+	}
+		
+	@GetMapping("/upload-photo")
+	public String showUploadForm(@RequestParam ("id")Long customerId, Model model) {
+		model.addAttribute("customerId", customerId);
+		return "upload-photo";
 
 	}
 

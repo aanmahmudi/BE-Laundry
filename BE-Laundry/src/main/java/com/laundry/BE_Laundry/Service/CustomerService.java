@@ -75,7 +75,7 @@ public class CustomerService {
 		customer.setPlaceOfBirth(registerDTO.getPlaceOfBirth());
 		customer.setDateOfBirth(registerDTO.getDateOfBirth());
 		customer.setPhoneNumber(registerDTO.getPhoneNumber());
-		customer.setRole(Customer.RoleType.valueOf(registerDTO.getRole().toUpperCase()));
+		customer.setRole(registerDTO.getRole());
 		customer.setVerified(false);
 		return customer;
 

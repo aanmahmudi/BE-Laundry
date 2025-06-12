@@ -55,13 +55,14 @@ public class CustomerController {
 		try {
 			customerService.registerCustomer(registerDTO);
 			logger.info("Registration successful for email: {}", registerDTO.getEmail());
-			return ResponseEntity.ok("Registration successfull. Verify your account using the token");
+//			return ResponseEntity.ok("Registration successfull. Verify your account using the token");
+			return ResponseEntity.ok(Map.of("message", "Registration successful. Verify your account using the token"));
 		} catch (IllegalArgumentException ex) {
 			logger.error("Registration failed: {}", ex.getMessage());
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Registration failed:" + ex.getMessage());
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("Error", "Registration failed", "message", ex.getMessage()));
 		} catch (Exception ex) {
 			logger.error("An Unexpected : {}", ex.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred:" + ex.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Internal Server Error", "message", ex.getMessage()));
 		}
 
 	}
