@@ -53,10 +53,12 @@ public class CustomerController {
 	public ResponseEntity<?> registerCustomer(@RequestBody RegisterRequestDTO registerDTO) {
 		logger.info("Register endpoint hit with data: {}", registerDTO);
 		try {
-			customerService.registerCustomer(registerDTO);
+			Customer savedCustomer = customerService.registerCustomer(registerDTO);
 			logger.info("Registration successful for email: {}", registerDTO.getEmail());
 //			return ResponseEntity.ok("Registration successfull. Verify your account using the token");
-			return ResponseEntity.ok(Map.of("message", "Registration successful. Verify your account using the token"));
+			return ResponseEntity.ok(Map.of("message", "Registration successful. Verify your account using the token",
+					"customerId", savedCustomer.getId()
+					));
 		} catch (IllegalArgumentException ex) {
 			logger.error("Registration failed: {}", ex.getMessage());
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("Error", "Registration failed", "message", ex.getMessage()));

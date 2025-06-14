@@ -31,6 +31,7 @@
 <p id="pdfResult"></p>
 
 <script>
+
     // Upload Foto
     document.getElementById("photoForm").addEventListener("submit", function(event) {
         event.preventDefault();
@@ -42,10 +43,9 @@
         })
         .then(res => res.json())
         .then(data => {
-            const msg = data.fileurl
+        	document.getElementById("photoResult").innerText = data.fileurl
                 ? "Foto berhasil diupload!"
                 : "Gagal upload foto: " + (data.error || "Unknown error");
-            document.getElementById("photoMessage").innerText = msg;
         })
         .catch(err => {
             document.getElementById("photoResult").innerText = "Error: " + err.message;
@@ -63,13 +63,12 @@
         })
         .then(res => res.json())
         .then(data => {
-        	const msg = data.fileurl
+        	document.getElementById("pdfResult").innerText = data.fileurl
             	? "PDF berhasil diupload!"
             	: "Gagal upload PDF: " + (data.error || "Unknown error");
-        	document.getElementById("pdfMessage").innerText = msg;
     	})
         .catch(err => {
-            document.getElementById("pdfMessage").innerText = "Error: " + err.message;
+            document.getElementById("pdfResult").innerText = "Error: " + err.message;
         });
     });
 </script>

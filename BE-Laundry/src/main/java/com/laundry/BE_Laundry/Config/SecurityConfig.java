@@ -32,6 +32,9 @@ public class SecurityConfig{
 				.requestMatchers(
 						"/",
 						"/register",
+						"/upload",
+						"/favicon.ico",
+						"/error/**",
 						"/api/customers/register",
 						"/api/customers/verify-token",
 						"/api/customers/verify-otp",
@@ -39,7 +42,7 @@ public class SecurityConfig{
 						"/api/customers/logout",
 						"/api/customers/update-password",
 						"/api/customers",
-						"/api/customers/{id}",
+						"/api/customers/**",
 						"/api/customers/upload/photo",
 						"/api/customers/upload-photo",
 						"/api/customers/upload/pdf",
@@ -49,13 +52,12 @@ public class SecurityConfig{
 						"/api/token/send",
 						"/api/token/verify",
 						"/api/products",
-						"/api/products/{id}",
+						"/api/products/**",
 						"/api/transactions",
-						"/api/transactions/{id}",
+						"/api/transactions/**",
 						"/api/transactions/payment",
 						"/api/transactions/paid",
-						"/api/transactions/{id}/payment",
-						"/error")
+						"/api/transactions/**/payment")
 				.permitAll()
 						
 				.anyRequest().authenticated()

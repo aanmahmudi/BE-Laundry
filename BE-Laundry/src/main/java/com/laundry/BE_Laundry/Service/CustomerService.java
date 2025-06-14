@@ -35,7 +35,7 @@ public class CustomerService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
-	public void registerCustomer(RegisterRequestDTO registerDTO) {
+	public Customer registerCustomer(RegisterRequestDTO registerDTO) {
 		if (customerRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
 			throw new IllegalArgumentException("Email already exist");
 		}
@@ -56,13 +56,14 @@ public class CustomerService {
 		customer.setVerified(false);
 				
 		// Simpan ke database
-		customerRepository.save(customer);
+		Customer saved = customerRepository.save(customer);
 		
 		// Kirim Token ke email
 		emailService.sendVerificationLink(customer.getEmail(), token);
 		
 		// Kirim OTP ke email
 		emailService.sendOTPEmail(customer.getEmail(), otp);
+		return saved;
 		
 	}
 
