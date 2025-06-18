@@ -45,12 +45,17 @@ public class PhotoStorageService {
 
 		if (customerOptional.isPresent()) {
 			Customer customer = customerOptional.get();
-
+			
+			// Simpan ke tabel relasi customer_photos
 			CustomerPhoto photo = new CustomerPhoto();
 			photo.setCustomer(customer);
 			photo.setFilename(filename);
 			photo.setFileUrl(fileUrl);
 			customerPhotoRepository.save(photo);
+			
+			//kolom photo_url di tabel customers
+			customer.setPhotoUrl(fileUrl);
+			customerRepository.save(customer);
 
 			return fileUrl;
 		} else {

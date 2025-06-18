@@ -1,5 +1,6 @@
 package com.laundry.BE_Laundry.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,8 +51,15 @@ public class CustomerController {
 	private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
 	@PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> registerCustomer(@RequestBody RegisterRequestDTO registerDTO) {
+	public ResponseEntity<?> registerCustomer(@Valid @RequestBody RegisterRequestDTO registerDTO, BindingResult bindingResult) {
 		logger.info("Register endpoint hit with data: {}", registerDTO);
+		if(bindingResult.hasErrors()) {
+			String errorMessage = bindingResult.getFieldError().getDefaultMessage();
+			Map<String, Object> response = new HashMap<>();
+			response.put("status", "error");
+			response.put("message",errorMessage);
+			return ResponseEntity.badRequest().body(response);
+		}
 		try {
 			Customer savedCustomer = customerService.registerCustomer(registerDTO);
 			logger.info("Registration successful for email: {}", registerDTO.getEmail());

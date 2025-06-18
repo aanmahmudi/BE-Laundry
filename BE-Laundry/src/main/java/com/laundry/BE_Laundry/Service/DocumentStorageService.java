@@ -47,11 +47,16 @@ public class DocumentStorageService {
 		if (customerOptional.isPresent()) {
 			Customer customer = customerOptional.get();
 			
+			// Simpan ke tabel relasi customer_documents
 			CustomerDocument document = new CustomerDocument();
 			document.setCustomer(customer);
 			document.setFileName(filename);
 			document.setFileUrl(fileUrl);
 			documentRepository.save(document);
+			
+			//kolom Doc_url di tabel customers
+			customer.setDocumentUrl(fileUrl);
+			customerRepository.save(customer);
 			
 			return fileUrl;
 			
