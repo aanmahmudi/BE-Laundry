@@ -4,38 +4,43 @@
     <title>Upload Dokumen</title>
 </head>
 <body>
-<h2>Upload Foto dan Dokumen</h2>
+	<h2>Upload Foto</h2>
 
 <!-- Upload Photo -->
-<form  id = "photoForm" enctype="multipart/form-data">
-	<input type = "hidden" name="customerId" th:value="${customerId}"/>
-	
-	<label>Upload Foto :</label><br>
-	<input type = "file" name="file" accept="image/*" required /><br><br>
-	
-	<button type="submit">Upload Foto</button>
-</form>
-<p id ="photoResult"></p>
+	<form  id = "photoForm" enctype="multipart/form-data">
+		<input type = "file" name="file" accept="image/*" required />
+		<input type = "hidden" name="customerId" th:value="${customerId}"/>
+		<input type = "hidden" id="customerEmail" name="email" th:value="${email}"/>
+		<button type="submit">Upload Foto</button>
+	</form>
+	<p id ="photoResult"></p>
 
-<hr>
+	<h2>Upload PDF</h2>
 
 <!-- Upload PDF -->
-<form id = "pdfForm" enctype="multipart/form-data">
-	<input type = "hidden" name="customerId" th:value="${customerId}"/>
-	
-	<label>Upload PDF :</label><br>
-	<input type = "file" name="file" accept="application/pdf" required /><br><br>
-	
-	<button type="submit">Upload PDF</button>
-</form>
-<p id="pdfResult"></p>
+	<form id = "pdfForm" enctype="multipart/form-data">
+		<input type = "file" name="file" accept="application/pdf" required />
+		<input type = "hidden" name="customerId" th:value="${customerId}"/>				
+		<button type="submit">Upload PDF</button>
+	</form>
+	<p id="pdfResult"></p>
 
 <script>
+	let photoUploaded = false;
+	let pdfUploaded = false;
+	
+	function checkAndRedirectToOTP(email){
+		if (photoUploaded && pdfUploaded){
+			//Redirect ke halaman input otp
+			window.location.href = "/otp?email=" + endcodeURIComponent(email);
+		}
+	}
 
     // Upload Foto
     document.getElementById("photoForm").addEventListener("submit", function(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
+        const email = document.getElementById("customerEmail").value;
 
         fetch('/api/customers/upload/photo', {
             method: 'POST',
@@ -43,9 +48,13 @@
         })
         .then(res => res.json())
         .then(data => {
-        	document.getElementById("photoResult").innerText = data.fileurl
-                ? "Foto berhasil diupload!"
-                : "Gagal upload foto: " + (data.error || "Unknown error");
+        	if (data.fileurl){
+        		document.getElementById("photoResult").innerText = "Foto Berhasil diupload";
+                photoUploaded = true;
+                checkAndRedirectToOTP(email);
+        	} else {
+                document.getElementById("photoResult").innerText = "Gagal upload foto: " + (data.error || "Unknown error");
+        	}
         })
         .catch(err => {
             document.getElementById("photoResult").innerText = "Error: " + err.message;
@@ -56,6 +65,7 @@
     document.getElementById("pdfForm").addEventListener("submit", function(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
+        const email = document.getElementById("customerEmail").value;
 
         fetch('/api/customers/upload/pdf', {
             method: 'POST',
@@ -63,9 +73,13 @@
         })
         .then(res => res.json())
         .then(data => {
-        	document.getElementById("pdfResult").innerText = data.fileurl
-            	? "PDF berhasil diupload!"
-            	: "Gagal upload PDF: " + (data.error || "Unknown error");
+        	if (data.fileUrl){
+        		document.getElementById("pdfResult").innerText = "PDF Berhasil Di Upload";
+        		pdfUploaded = true;
+        		checkAndRedirectToOTP(email);
+        	} else {
+        		document.getElementById("pdfResult").innerText = "Gagal Upload PDF : " + (data.error || "Unknown error");
+        	}
     	})
         .catch(err => {
             document.getElementById("pdfResult").innerText = "Error: " + err.message;

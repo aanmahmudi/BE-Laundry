@@ -4,9 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.laundry.BE_Laundry.DTO.OTPSendDTO;
@@ -71,6 +74,13 @@ public class OTPController {
 			logger.error("Unexcepted error while resend OTP to {}: {}", email, ex.getMessage(), ex);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured while resend OTP");
 		}
+	}
+
+	@GetMapping("/otp")
+	public String showOtpPage(@RequestParam("email") String email, Model model) {
+		model.addAttribute("email", email);
+		return "otp-verification";
+
 	}
 
 }

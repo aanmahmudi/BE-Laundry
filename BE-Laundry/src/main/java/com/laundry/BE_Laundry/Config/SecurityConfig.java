@@ -48,6 +48,7 @@ public class SecurityConfig{
 						"/api/customers/upload/pdf",
 						"/api/customers/upload-pdf",
 						"/api/otp/send",
+						"/spi/otp/otp",
 						"/api/otp/verify",
 						"/api/token/send",
 						"/api/token/verify",

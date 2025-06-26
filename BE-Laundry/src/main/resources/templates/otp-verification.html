@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>OTP Verification</title>
+	<meta charset="UTF-8">	
+</head>
+<body>
+	<h2>Verifikasi OTP</h2>
+	
+	<form onSubmit="event.prevenDefault(); verifyOtp();">
+		<input type = "hidden" id="otpEmail" name="email" />
+		<label>Kode OTP:</label>
+		<input type = "text" id="otp" name="otp" required/><br><br>
+		<button type="submit">Verifikasi</button>
+	</form>
+	
+	<p id="result" style="color:red;"></p>
+	
+	<script>
+		const email = new URLSearchParams(window.location.search).get("email");
+		document.getElementById("otpEmail").value = emailParam;
+		
+		document.getElementById("otpForm").addEventListener("submit", function(event){
+			event.preventDefault();
+			
+			const payload = {
+					email: document.getElementById("otpEmail").value,
+					otp: document.getElementById("otp").value
+			};
+			
+			fetch('/verify', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email: email, otp: otp })
+			})
+			.then(response => {
+				if (!response.ok){
+					return response.text().then(text => { throw new Error (text); });
+				}
+				return response.text();
+			})
+			.then(data => {
+				document.getElementById("result").style.color = "blue";
+				document.getElementById("result").innerText = "Verifikasi Berhasil";
+				
+				//redirect kalau perlu
+				//window.Location.href = "/Login";
+			})
+			.catch(error => {
+				document.getElementById("result").innerText = "Gagal Verifikasi: " + error.message;
+			});
+		});
+	</script>
+</body>
+</html>

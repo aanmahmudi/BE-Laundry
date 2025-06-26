@@ -56,7 +56,8 @@ public class PhotoUploadController {
 	}
 		
 	@GetMapping("/upload-photo")
-	public String showUploadForm(@RequestParam ("id")Long customerId, Model model) {
+	public String showUploadForm(@RequestParam ("email") String email,@RequestParam ("id")Long customerId, Model model) {
+		model.addAttribute("email", email);
 		model.addAttribute("customerId", customerId);
 		return "upload-photo";
 
