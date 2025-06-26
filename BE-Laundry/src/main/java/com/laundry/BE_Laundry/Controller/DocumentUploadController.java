@@ -50,9 +50,9 @@ public class DocumentUploadController {
 	}
 	
 	@GetMapping("/upload-pdf")
-	public String showUploadForm(@RequestParam ("id")Long customerId, Model model) {
-		model.addAttribute("customerId", customerId);
-		return "upload-documents";
+	public String showUploadForm(@RequestParam ("email")String email, Model model) {
+		model.addAttribute("email", email);
+		return "upload";
 
 	}
 

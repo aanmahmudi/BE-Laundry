@@ -59,7 +59,7 @@ public class PhotoUploadController {
 	public String showUploadForm(@RequestParam ("email") String email,@RequestParam ("id")Long customerId, Model model) {
 		model.addAttribute("email", email);
 		model.addAttribute("customerId", customerId);
-		return "upload-photo";
+		return "upload";
 
 	}
 
