@@ -100,3 +100,21 @@ spring:
       maximum-pool-size: 10
 server:
   port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: railway
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    driver-class-name: org.postgresql.Driver
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      connection-timeout: 300000
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+server:
+  port: 8080
