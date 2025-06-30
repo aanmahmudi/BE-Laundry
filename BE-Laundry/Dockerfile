@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 
 # Build the application
-RUN ./mvnw clean install -DskipTests
+RUN mvn clean install -DskipTests
 
 # Use an official OpenJDK runtime as a parent image
 FROM openjdk:21-jdk-slim
