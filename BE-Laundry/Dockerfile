@@ -1,3 +1,14 @@
+# ==== Build Stage ====
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
+
+WORKDIR /app
+
+# Copy project files
+COPY . .
+
+# Build the application
+RUN ./mvnw clean install -DskipTests
+
 # Use an official OpenJDK runtime as a parent image
 FROM openjdk:21-jdk-slim
 
@@ -5,7 +16,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copy the built jar file into the container
-COPY target/BE-Laundry-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=builder /app/target/BE-Laundry-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose port 8080
 EXPOSE 8080
