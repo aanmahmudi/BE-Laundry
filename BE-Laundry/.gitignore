@@ -6,6 +6,11 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Build folders
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
 # IDE/Build ignores
 .apt_generated
 .classpath
@@ -14,19 +19,20 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
 .idea
 *.iws
 *.iml
 *.ipr
+.vscode/
 
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-.vscode/
+# Logs
+*.log
+
+#
