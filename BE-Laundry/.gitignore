@@ -1,32 +1,24 @@
-# Ignore all target folders except jar
+# Ignore compiled output
 target/
-!target/*.jar
+build/
+*.class
 
+# Maven wrapper binary only (keep)
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-# IDE/Build ignores
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-.idea
-*.iws
+# IDE files
+.idea/
 *.iml
 *.ipr
-
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
+*.iws
 .vscode/
+.nb-gradle/
+nbproject/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
