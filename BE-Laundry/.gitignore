@@ -35,4 +35,9 @@ build/
 # Logs
 *.log
 
-#
+# Ignore sensitive config files
+application.yml
+application-docker.yml
+application-railway.yml
+.env
+.env.*
