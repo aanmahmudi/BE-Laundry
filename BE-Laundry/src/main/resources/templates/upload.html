@@ -24,15 +24,22 @@
 		<button type="submit">Upload PDF</button>
 	</form>
 	<p id="pdfResult"></p>
+	
+	<button id="nextBtn" style="display: none;" onclick="goToOtp()">Next: OTP</button>
 
 <script>
 	let photoUploaded = false;
 	let pdfUploaded = false;
 	
-	function checkAndRedirectToOTP(email){
+	function goToOtp(){
+		const email = document.getElementById("customerEmail").value ;
+		window.location.href = "/otp?email=" + encodeURIComponent (email);
+	}
+	
+	function checkAndRedirectToOTP(){
 		if (photoUploaded && pdfUploaded){
 			//Redirect ke halaman input otp
-			window.location.href = "/otp?email=" + endcodeURIComponent(email);
+			document.getElementById("nextBtn").style.display = "inline-block";
 		}
 	}
 
@@ -46,12 +53,20 @@
             method: 'POST',
             body: formData
         })
-        .then(res => res.json())
+        .then(async res => {
+        	const text = await res.text();
+        	try {
+        		return JSON.parse(text);
+        	}catch (e){
+        		throw new Error("Invalid JSON Response: " + text);
+        	}
+        })
         .then(data => {
-        	if (data.fileurl){
+        	console.log("Response data:", data);
+        	if (data.data && data.data.fileUrl){
         		document.getElementById("photoResult").innerText = "Foto Berhasil diupload";
                 photoUploaded = true;
-                checkAndRedirectToOTP(email);
+                checkAndRedirectToOTP();
         	} else {
                 document.getElementById("photoResult").innerText = "Gagal upload foto: " + (data.error || "Unknown error");
         	}
@@ -71,16 +86,24 @@
             method: 'POST',
             body: formData
         })
-        .then(res => res.json())
-        .then(data => {
-        	if (data.fileUrl){
-        		document.getElementById("pdfResult").innerText = "PDF Berhasil Di Upload";
-        		pdfUploaded = true;
-        		checkAndRedirectToOTP(email);
-        	} else {
-        		document.getElementById("pdfResult").innerText = "Gagal Upload PDF : " + (data.error || "Unknown error");
+        .then(async res => {
+        	const text = await res.text();
+        	try {
+        		return JSON.parse(text);
+        	}catch (e){
+        		throw new Error("Invalid JSON Response: " + text);
         	}
-    	})
+        })
+        .then(data => {
+        	console.log("Response data:", data);
+        	if (data.data && data.data.fileUrl){
+        		document.getElementById("pdfResult").innerText = "PDF Berhasil diupload";
+                pdfUploaded = true;
+                checkAndRedirectToOTP();
+        	} else {
+                document.getElementById("pdfResult").innerText = "Gagal upload pdf: " + (data.error || "Unknown error");
+        	}
+        })
         .catch(err => {
             document.getElementById("pdfResult").innerText = "Error: " + err.message;
         });
