@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>OTP Verification</title>
-	<meta charset="UTF-8">	
+<title>OTP Verification</title>
+<meta charset="UTF-8">
 </head>
 <body>
 	<h2>Verifikasi OTP</h2>
-	
-	<form onSubmit="event.prevenDefault(); verifyOtp();">
-		<input type = "hidden" id="otpEmail" name="email" />
-		<label>Kode OTP:</label>
-		<input type = "text" id="otp" name="otp" required/><br><br>
+
+	<form id="otpForm">
+		<input type="hidden" id="otpEmail" name="email" />
+		<label>Kode Otp:</label>
+		<input type="text" id="otp" name="otp" required /><br><br>
 		<button type="submit">Verifikasi</button>
 	</form>
-	
-	<p id="result" style="color:red;"></p>
-	
+
+	<p id="result" style="color: red;"></p>
+
 	<script>
 		const email = new URLSearchParams(window.location.search).get("email");
-		document.getElementById("otpEmail").value = emailParam;
+		if (!email){
+			document.getElementById("result").innerText = "Email Tidak ditemukan di URL.";
+		} else {
+			document.getElementById("otpEmail").value = email;
+		}
 		
 		document.getElementById("otpForm").addEventListener("submit", function(event){
 			event.preventDefault();
 			
-			const payload = {
-					email: document.getElementById("otpEmail").value,
-					otp: document.getElementById("otp").value
-			};
+			const otp = document.getElementById("otp").value;
 			
-			fetch('/verify', {
+			fetch('/api/otp/verify', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ email: email, otp: otp })

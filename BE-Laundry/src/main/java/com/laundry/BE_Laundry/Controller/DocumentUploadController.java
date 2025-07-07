@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.laundry.BE_Laundry.DTO.ApiMesDocUpload;
+import com.laundry.BE_Laundry.Model.Customer;
+import com.laundry.BE_Laundry.Repository.CustomerRepository;
 import com.laundry.BE_Laundry.Service.DocumentStorageService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 public class DocumentUploadController {
 
 	private final DocumentStorageService documentService;
+	
+	private final CustomerRepository customerRepository;
 
 	@PostMapping(value = "/upload/pdf", consumes = "multipart/form-data")
 	public ResponseEntity<ApiMesDocUpload<Map<String, String>>> uploadFile(
@@ -63,8 +68,17 @@ public class DocumentUploadController {
 	}
 	
 	@GetMapping("/upload-pdf")
-	public String showUploadForm(@RequestParam ("email")String email, Model model) {
+	public String showUploadForm(@RequestParam ("email") String email,
+									@RequestParam (value = "id", required = false)Long customerId, Model model) {
+		log.info("Menerima request upload-pdf untuk email: '{}'", email);
+
+		if (email == null || email.trim().isEmpty()) {
+			return "redirect:/error-page?message=Email%20tidak%20boleh%20kosong";
+		}
+		Customer customer = customerRepository.findByEmail(email)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer dengan email tersebut tidak ditemukan"));
 		model.addAttribute("email", email);
+		model.addAttribute("customerId", customer.getId());
 		return "upload";
 
 	}

@@ -5,12 +5,14 @@
 </head>
 <body>
 	<h2>Upload Foto</h2>
-
+	
+	
+	<input type = "hidden" id="customerEmail" name="email" th:value="${email}"/>
+	
 <!-- Upload Photo -->
 	<form  id = "photoForm" enctype="multipart/form-data">
 		<input type = "file" name="file" accept="image/*" required />
 		<input type = "hidden" name="customerId" th:value="${customerId}"/>
-		<input type = "hidden" id="customerEmail" name="email" th:value="${email}"/>
 		<button type="submit">Upload Foto</button>
 	</form>
 	<p id ="photoResult"></p>
