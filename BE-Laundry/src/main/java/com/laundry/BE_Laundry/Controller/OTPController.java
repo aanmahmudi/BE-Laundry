@@ -76,11 +76,5 @@ public class OTPController {
 		}
 	}
 
-	@GetMapping("/otp")
-	public String showOtpPage(@RequestParam("email") String email, Model model) {
-		model.addAttribute("email", email);
-		return "otp-verification";
-
-	}
 
 }

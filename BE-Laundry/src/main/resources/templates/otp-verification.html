@@ -7,50 +7,56 @@
 <body>
 	<h2>Verifikasi OTP</h2>
 
-	<form id="otpForm">
-		<input type="hidden" id="otpEmail" name="email" />
-		<label>Kode Otp:</label>
-		<input type="text" id="otp" name="otp" required /><br><br>
+	<form onSubmit="event.preventDefault(); verifyOtp();">
+		<input type="hidden" id="email" th:value="${email}" />
+		<label>Email:</label>
+		<label>Otp:</label>
+		<input type="text" id="otp" required/><br><br>
 		<button type="submit">Verifikasi</button>
 	</form>
 
-	<p id="result" style="color: red;"></p>
-
-	<script>
-		const email = new URLSearchParams(window.location.search).get("email");
-		if (!email){
-			document.getElementById("result").innerText = "Email Tidak ditemukan di URL.";
-		} else {
-			document.getElementById("otpEmail").value = email;
-		}
+<script>
+	
+	//debug
+	document.addEventListener("DOMContentLoaded", function(){
+		document.getElementById("email-debug").innerText = document.getElementById("email").value;
+	});
+	
+	function verifyOtp(){
+		const email = document.getElementById("email").value;
+		const otp = document.getElementById("otp").value;
 		
-		document.getElementById("otpForm").addEventListener("submit", function(event){
-			event.preventDefault();
+		if (!email || !otp){
+			alert ("Email dan OTP Tidak boleh kosong");
+			return;
+		}
+	
 			
-			const otp = document.getElementById("otp").value;
-			
-			fetch('/api/otp/verify', {
+		fetch('/api/otp/verify', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ email: email, otp: otp })
-			})
-			.then(response => {
-				if (!response.ok){
-					return response.text().then(text => { throw new Error (text); });
-				}
-				return response.text();
-			})
-			.then(data => {
-				document.getElementById("result").style.color = "blue";
-				document.getElementById("result").innerText = "Verifikasi Berhasil";
+		})
+		.then(response => {
+			if (!response.ok){
+				throw new Error ("OTP Verification failed");
+			}
+			return response.json();
+		})
+		.then(data => {
+			console.log("Success:", data);
+			alert("OTP Verification success")
+				//document.getElementById("result").style.color = "blue";
+				//document.getElementById("result").innerText = "Verifikasi Berhasil";
 				
 				//redirect kalau perlu
 				//window.Location.href = "/Login";
-			})
-			.catch(error => {
-				document.getElementById("result").innerText = "Gagal Verifikasi: " + error.message;
-			});
+		})
+		.catch(error => {
+			console.error("Error:", error);
+			alert("OTP Verification failed")
 		});
-	</script>
+	}		
+</script>
 </body>
 </html>

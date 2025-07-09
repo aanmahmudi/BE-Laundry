@@ -7,7 +7,7 @@
 <body>
     <h2>Register Customer</h2>
     
-        <form th:object="${registerDTO}" onsubmit="event.preventDefault(); submitForm();">
+    <form th:object="${registerDTO}" onsubmit="event.preventDefault(); submitForm();">
         <label>Username:</label><br>
         <input type="text" th:field="*{username}" required/><br>
 
@@ -37,7 +37,7 @@
         <button type="submit">Register</button>
     </form>
     
-    <p id="result" style="color: green;"></p>
+    <p id="result" style="color: red;"></p>
 
 	<script>
         function submitForm() {

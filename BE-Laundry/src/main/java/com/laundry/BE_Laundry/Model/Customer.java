@@ -44,7 +44,6 @@ public class Customer {
 	@Column(nullable = false)
 	private String placeOfBirth;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	@Column(name = "date_of_birth", nullable = false)
 	private LocalDate dateOfBirth;
 	
@@ -69,7 +68,7 @@ public class Customer {
 	@Column(name = "is_verified")
 	private boolean verified = false;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Jakarta")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Jakarta")
 	private String verificationToken;
 	private OffsetDateTime tokenExpiry;
 	

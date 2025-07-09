@@ -18,6 +18,19 @@ public class OTPService {
 	private final CustomerRepository customerRepository;
 	private final EmailService emailService;
 	
+	public void sendOtpToCustomer(Customer customer) {
+		if (customer == null) {
+			throw new IllegalArgumentException("Customer tidak boleh Null");
+		}
+		this.generate(customer.getEmail());
+	}
+	
+	public void sendOtpEmail(String email) {
+		Customer customer = customerRepository.findByEmail(email)
+				.orElseThrow(()-> new RuntimeException("Customer tidak ditemukan"));
+		sendOtpToCustomer(customer);
+	}
+	
 	public void generate (String email) {
 		Customer c = customerRepository.findByEmail(email)
 				.orElseThrow(()-> new RuntimeException("User not found"));
