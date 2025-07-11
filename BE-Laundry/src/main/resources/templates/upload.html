@@ -6,13 +6,13 @@
 <body>
 	<h2>Upload Foto</h2>
 	
-	
-	<input type = "hidden" id="customerEmail" name="email" th:value="${email}"/>
+	<input type="hidden" id="customerEmail" th:value="${email}"/>
 	
 <!-- Upload Photo -->
-	<form  id = "photoForm" enctype="multipart/form-data">
+	<form  id = "photoForm" enctype="multipart/form-data" method="post" action="upload-data">
 		<input type = "file" name="file" accept="image/*" required />
 		<input type = "hidden" name="customerId" th:value="${customerId}"/>
+		<input type = "hidden" name="email" th:value="${email}"/> 
 		<button type="submit">Upload Foto</button>
 	</form>
 	<p id ="photoResult"></p>
@@ -20,9 +20,10 @@
 	<h2>Upload PDF</h2>
 
 <!-- Upload PDF -->
-	<form id = "pdfForm" enctype="multipart/form-data">
+	<form id = "pdfForm" enctype="multipart/form-data" method="post" action="upload-data">
 		<input type = "file" name="file" accept="application/pdf" required />
-		<input type = "hidden" name="customerId" th:value="${customerId}"/>				
+		<input type = "hidden" name="customerId" th:value="${customerId}"/>	
+		<input type = "hidden" name="email" th:value="${email}"/> 			
 		<button type="submit">Upload PDF</button>
 	</form>
 	<p id="pdfResult"></p>
