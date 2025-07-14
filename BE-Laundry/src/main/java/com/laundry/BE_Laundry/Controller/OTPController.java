@@ -1,5 +1,8 @@
 package com.laundry.BE_Laundry.Controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -48,15 +51,22 @@ public class OTPController {
 	}
 
 	@PostMapping("/verify")
-	public ResponseEntity<?> verify(@RequestBody @Valid OTPVerificationDTO otpVerify) {
+	public ResponseEntity<Map<String, String>> verify(@RequestBody @Valid OTPVerificationDTO otpVerify) {
 		try {
 			otpService.verify(otpVerify.getEmail(), otpVerify.getOtp());
 			logger.info("OTP verified for {}", otpVerify.getEmail());
-			return ResponseEntity.ok("Verification via OTP Successful.");
+			
+			Map<String, String> response = new HashMap<>();
+			response.put("message", "Verification via OTP Successful.");
+			return ResponseEntity.ok(response);
 		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed:" + ex.getMessage());
+			Map<String, String> response = new HashMap<>();
+			response.put("error", "Verification failed:" + ex.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured:" + ex.getMessage());
+			Map<String, String> response = new HashMap<>();
+			response.put("error", "An error occurred:" + ex.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 	}
 

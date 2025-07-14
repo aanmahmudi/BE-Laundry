@@ -49,7 +49,7 @@
 				body: JSON.stringify({ email: email, otp: otp })
 		})
 		.then(response => {
-			if (!response.ok){
+			if (response.ok){
 				alert("OTP Verifikasi berhasil");
 			} else {
 				alert("OTP Verifikasi gagal")
