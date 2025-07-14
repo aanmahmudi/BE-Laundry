@@ -50,13 +50,15 @@
 		})
 		.then(response => {
 			if (!response.ok){
-				throw new Error ("OTP Verification failed");
+				alert("OTP Verifikasi berhasil");
+			} else {
+				alert("OTP Verifikasi gagal")
 			}
 			return response.json();
 		})
 		.then(data => {
 			console.log("Success:", data);
-			alert(data);
+			alert(JSON.stringify(data));
 				//document.getElementById("result").style.color = "blue";
 				//document.getElementById("result").innerText = "Verifikasi Berhasil";
 				
